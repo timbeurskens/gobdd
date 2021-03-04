@@ -4,17 +4,18 @@ import "gobdd/operators"
 
 // CNF should yield 3-clause elements, to be used by Tseitin transformation
 func CNF(e operators.Expression) operators.CNF {
-    panic("not implemented")
+	panic("not implemented")
 }
 
 // NNF converts a given expression to negation-normal-form by replacing every operator to an equivalent disjunction/conjunction/negation
 // and applying demorgan on the expressions to push negation to leafs
 func NNF(e operators.Expression) operators.Expression {
-    op, ok := e.(operators.Operator)
-    if ok {
-        return op.Normalize()
-    }
-    return op
+	op, ok := e.(operators.Operator)
+	if ok {
+		// todo: enable NNF Normalization
+		// return op.Normalize()
+	}
+	return op
 }
 
 // a <-> (b -> c)
@@ -27,8 +28,6 @@ func NNF(e operators.Expression) operators.Expression {
 // ((b && -c) || a)
 // (b || a) && (-c || a)
 
-
 // a <-> (b || c)
-
 
 // a <-> (b && c)

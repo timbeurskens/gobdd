@@ -1,36 +1,36 @@
 package operators
 
 type ExclusiveDisjunction struct {
-    A Expression
-    B Expression
+	A Expression
+	B Expression
 }
 
-func (e *ExclusiveDisjunction) Normalize() Expression {
-    return And(Or(e.LeftChild(), e.RightChild()), Not(And(e.LeftChild(), e.RightChild())).(Operator).Normalize())
-}
+// todo: enable Normalize function
+// func (e *ExclusiveDisjunction) Normalize() Expression {
+//     return And(Or(e.LeftChild(), e.RightChild()), Not(And(e.LeftChild(), e.RightChild())).(Operator).Normalize())
+// }
 
 func (e *ExclusiveDisjunction) String() string {
-    return "⊗"
+	return "⊗"
 }
 
 func (e *ExclusiveDisjunction) NodeEquivalent(n Node) bool {
-    _, ok := n.(*ExclusiveDisjunction)
-    return ok
+	_, ok := n.(*ExclusiveDisjunction)
+	return ok
 }
 
 func (e *ExclusiveDisjunction) LeftChild() Node {
-    return e.A
+	return e.A
 }
 
 func (e *ExclusiveDisjunction) RightChild() Node {
-    return e.B
+	return e.B
 }
 
 func (e *ExclusiveDisjunction) ConstEval(a, b Constant) Constant {
-    return Cons(a.Value() != b.Value())
+	return Cons(a.Value() != b.Value())
 }
 
 func (e *ExclusiveDisjunction) Join(a, b Expression) Operator {
-    return &ExclusiveDisjunction{a, b}
+	return &ExclusiveDisjunction{a, b}
 }
-
