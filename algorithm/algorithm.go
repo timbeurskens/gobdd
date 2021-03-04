@@ -22,6 +22,9 @@ func buildTree(e operators.Expression) (root operators.Node) {
 	} else if v, ok := e.(operators.Variable); ok {
 		// for every variable p: introduce choice p(true, false)
 		return operators.NewChoice(v)
+	} else if v, ok := e.(*operators.Negation); ok {
+		// 	special case for negations, due to a compatibility issue for CNF terms, negations need to be converted
+		return buildTree(operators.Implies(v.Negate(), operators.Cons(false)))
 	} else if op, ok := e.(operators.Operator); ok {
 		// first make sure the subtrees are complete
 		a, b := buildTree(e.LeftChild()), buildTree(e.RightChild())
@@ -79,11 +82,7 @@ func Apply(a, b operators.Node, op operators.Operator) operators.Node {
 
 	// todo: use choice operator from variable v
 	// return v
-	return &operators.Choice{
-		Var:   v.Var,
-		True:  FromExpression(left),
-		False: FromExpression(right),
-	}
+	return operators.JoinByChoice(v.Var, FromExpression(left), FromExpression(right))
 }
 
 // todo: introduce simplifications for implication, biimplication, xor, nor to CNF
