@@ -5,6 +5,14 @@ type ExclusiveDisjunction struct {
 	B Expression
 }
 
+func (e *ExclusiveDisjunction) SetLeftChild(n Node) {
+	e.A = n
+}
+
+func (e *ExclusiveDisjunction) SetRightChild(n Node) {
+	e.B = n
+}
+
 // todo: enable Normalize function
 // func (e *ExclusiveDisjunction) Normalize() Expression {
 //     return And(Or(e.LeftChild(), e.RightChild()), Not(And(e.LeftChild(), e.RightChild())).(Operator).Normalize())

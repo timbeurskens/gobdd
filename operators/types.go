@@ -6,6 +6,8 @@ type Node interface {
 	NodeEquivalent(n Node) bool
 	LeftChild() Node
 	RightChild() Node
+	SetLeftChild(n Node)
+	SetRightChild(n Node)
 	fmt.Stringer
 }
 

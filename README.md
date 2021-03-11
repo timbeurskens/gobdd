@@ -7,7 +7,7 @@ Additional testing methods are available to test for tautologies, contradictions
 Future versions should extend the SAT solver to also support CNF formulas using the Conflict-Driven Clause-Learning method (CDCL).
 In this variant, a Tseitin transformation can be applied to convert any boolean formula to a CNF.
 
-The current (BDD) based method is very inefficient and contains some problems. The N-queens problem can be solved for N=6 in roughly ... minutes.
+The current (BDD) based method is very inefficient and contains some problems. The N-queens problem can be solved for N=6 in roughly 6 minutes.
 Model finding in ROBDD-based methods is trivial and supported by this tool.
 
 ### Example: tautology test for p or not p

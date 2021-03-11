@@ -5,6 +5,14 @@ type Implication struct {
 	B Expression
 }
 
+func (i *Implication) SetLeftChild(n Node) {
+	i.A = n
+}
+
+func (i *Implication) SetRightChild(n Node) {
+	i.B = n
+}
+
 // todo: enable normalize function
 // func (i *Implication) Normalize() Expression {
 //     lnorm := i.LeftChild().(Expression).Normalize()

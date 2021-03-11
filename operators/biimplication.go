@@ -5,6 +5,14 @@ type Biimplication struct {
 	B Expression
 }
 
+func (bi *Biimplication) SetLeftChild(n Node) {
+	bi.A = n
+}
+
+func (bi *Biimplication) SetRightChild(n Node) {
+	bi.B = n
+}
+
 // todo: enable normalize function
 // func (bi *Biimplication) Normalize() Expression {
 //     return And(Implies(bi.LeftChild(), bi.RightChild()).(Operator).Normalize(), Implies(bi.RightChild(), bi.LeftChild()).(Operator).Normalize())

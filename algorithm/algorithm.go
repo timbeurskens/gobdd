@@ -22,9 +22,10 @@ func buildTree(e operators.Expression) (root operators.Node) {
 	} else if v, ok := e.(operators.Variable); ok {
 		// for every variable p: introduce choice p(true, false)
 		return operators.NewChoice(v)
-	} else if v, ok := e.(*operators.Negation); ok {
+	} else if _, ok := e.(*operators.Negation); ok {
+		panic("negation operator cannot exist in an expression, make sure to prune")
 		// 	special case for negations, due to a compatibility issue for CNF terms, negations need to be converted
-		return buildTree(operators.Implies(v.Negate(), operators.Cons(false)))
+		//return buildTree(operators.Implies(v.Negate(), operators.Cons(false)))
 	} else if op, ok := e.(operators.Operator); ok {
 		// first make sure the subtrees are complete
 		a, b := buildTree(e.LeftChild()), buildTree(e.RightChild())
@@ -33,6 +34,22 @@ func buildTree(e operators.Expression) (root operators.Node) {
 		return Apply(a, b, op)
 	}
 	return e
+}
+
+func PruneUnary(e operators.Expression) operators.Expression {
+	if e == nil {
+		return nil
+	} else if v, ok := e.(*operators.Negation); ok {
+		return operators.Implies(PruneUnary(v.Negate()), operators.Cons(false))
+	} else {
+		left := PruneUnary(e.LeftChild())
+		right := PruneUnary(e.RightChild())
+
+		e.SetLeftChild(left)
+		e.SetRightChild(right)
+
+		return e
+	}
 }
 
 // not working at the moment due to equivalence issue
