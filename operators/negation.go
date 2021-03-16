@@ -61,7 +61,7 @@ func (n *Negation) Negate() Term {
 
 func (n *Negation) TermEquivalent(t Term) bool {
 	other, ok := t.(*Negation)
-	return ok && other.NodeEquivalent(other)
+	return ok && n.NodeEquivalent(other)
 }
 
 func ToNormalTerm(t Term) Term {

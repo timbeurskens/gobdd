@@ -55,7 +55,7 @@ func Variables(cnf CNF) []Term {
 	for _, clause := range cnf {
 		terms := clause.Terms()
 		for _, term := range terms {
-			if !result.HasTerm(term) {
+			if !result.HasTerm(term) && !result.HasTerm(term.Negate()) {
 				result = append(result, term)
 			}
 		}

@@ -94,6 +94,7 @@ func recursiveCDCL(v operators.Term, variables []operators.Term, stack *CDCLStac
 		// sat
 		return true
 	}
+
 	vNeg := stack.Backtrack()
 	if recursiveCDCL(vNeg, remaining, stack) {
 		// yeah, return
