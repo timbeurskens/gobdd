@@ -20,6 +20,17 @@ var (
 	}
 )
 
+func TestTransformTseitin(t *testing.T) {
+	be := bdd_test.Bench{T: t}
+	for _, e := range expressions {
+		t.Run(fmt.Sprintf("Expression %s is equal to CNF of expression", e.String()), func(t *testing.T) {
+			nnf := NNF(e)
+			cnf := TransformTseitin(nnf)
+			be.AssertEquivalent("expression is equal to CNF of expression", FromExpression(e), FromExpression(cnf.Expr()))
+		})
+	}
+}
+
 func TestCNF(t *testing.T) {
 	be := bdd_test.Bench{T: t}
 	for _, e := range expressions {

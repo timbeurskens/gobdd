@@ -1,10 +1,15 @@
 package algorithm
 
-import "gobdd/operators"
+import (
+	"gobdd/operators"
+	"log"
+)
 
 // CNF should yield 3-clause elements, to be used by Tseitin transformation
 func CNF(e operators.Expression) operators.CNF {
-	panic("not implemented")
+	log.Println("cnf(", e.LeftChild(), e, e.RightChild().LeftChild(), e.RightChild(), e.RightChild().RightChild(), ")")
+	//panic("not implemented")
+	return nil
 }
 
 // NNF converts a given expression to negation-normal-form by replacing every operator to an equivalent disjunction/conjunction/negation
