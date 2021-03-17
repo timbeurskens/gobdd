@@ -46,6 +46,15 @@ func (s *CDCLStack) UnitPropagate(clause operators.CNFClause) {
 	log.Println("propagate", clause, *s)
 }
 
+func (s *CDCLStack) Backtrack2() operators.Term {
+	var last int
+	s.Indexes, last = s.Indexes[:len(s.Indexes)-1], s.Indexes[len(s.Indexes)-1]
+	term := s.Clauses[last].(operators.Term)
+	s.Clauses = s.Clauses[:last]
+	log.Println("backtrack", *s)
+	return term
+}
+
 func (s *CDCLStack) Backtrack() operators.Term {
 	var last int
 	s.Indexes, last = s.Indexes[:len(s.Indexes)-1], s.Indexes[len(s.Indexes)-1]
@@ -55,13 +64,52 @@ func (s *CDCLStack) Backtrack() operators.Term {
 	return term
 }
 
+func (s *CDCLStack) IsTrue(term operators.Term) bool {
+	for _, clause := range s.Clauses {
+		if clause.NumTerms() == 1 && clause.Exclude(term) == nil {
+			return true
+		}
+	}
+	return false
+}
+
+func ModelFromCDCLStack(stack *CDCLStack, variables []operators.Term) (model operators.Node) {
+	if len(variables) == 0 {
+		return &operators.TrueConst
+	}
+
+	choiceVar, remaining := variables[0].Variable(), variables[1:]
+
+	var trueTree, falseTree operators.Node
+
+	if stack.IsTrue(choiceVar) {
+		trueTree = ModelFromCDCLStack(stack, remaining)
+		falseTree = &operators.FalseConst
+	} else if stack.IsTrue(choiceVar.Negate()) {
+		trueTree = &operators.FalseConst
+		falseTree = ModelFromCDCLStack(stack, remaining)
+	} else {
+		return &operators.FalseConst
+	}
+
+	return &operators.Choice{
+		True:  trueTree,
+		Var:   choiceVar,
+		False: falseTree,
+	}
+}
+
 // CDCL implements the conflict-driven-clause-learning algorithm
-func CDCL(cnf operators.CNF) operators.Expression {
+func CDCL(cnf operators.CNF) (model operators.Node) {
 	stack := NewCDCLStack(cnf)
 
 	variables := operators.Variables(cnf)
 
-	return operators.Cons(recursiveCDCL(nil, variables, stack))
+	_ = operators.Cons(recursiveCDCL(nil, variables, stack))
+
+	model = ModelFromCDCLStack(stack, variables)
+
+	return
 }
 
 func recursiveCDCL(v operators.Term, variables []operators.Term, stack *CDCLStack) bool {
@@ -95,12 +143,16 @@ func recursiveCDCL(v operators.Term, variables []operators.Term, stack *CDCLStac
 		return true
 	}
 
-	vNeg := stack.Backtrack()
+	term := stack.Backtrack2()
+	vNeg := term.Negate()
+	stack.Decide(term.Negate())
 	if recursiveCDCL(vNeg, remaining, stack) {
 		// yeah, return
 		// sat
 		return true
 	}
+
+	stack.Backtrack2()
 
 	// helaas
 	// unsat

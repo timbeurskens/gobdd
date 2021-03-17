@@ -4,6 +4,10 @@ type Negation struct {
 	T Node
 }
 
+func (n *Negation) Variable() Variable {
+	return n.Negate().Variable()
+}
+
 func (n *Negation) SetLeftChild(node Node) {
 	n.T = node
 }

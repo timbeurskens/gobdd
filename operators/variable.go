@@ -4,6 +4,10 @@ import "fmt"
 
 type StringVariable string
 
+func (s *StringVariable) Variable() Variable {
+	return s
+}
+
 func (s *StringVariable) SetLeftChild(n Node) {
 	if n != nil {
 		panic("string variable has no left child")
@@ -71,6 +75,10 @@ func (s *StringVariable) String() string {
 }
 
 type IntVariable int
+
+func (c *IntVariable) Variable() Variable {
+	return c
+}
 
 func (c *IntVariable) SetLeftChild(n Node) {
 	if n != nil {

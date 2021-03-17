@@ -15,6 +15,7 @@ type Term interface {
 	CNFClause
 	Negate() Term
 	TermEquivalent(t Term) bool
+	Variable() Variable
 	Expression
 	fmt.Stringer
 }
