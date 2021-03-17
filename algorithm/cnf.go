@@ -6,8 +6,12 @@ import (
 )
 
 // CNF should yield 3-clause elements, to be used by Tseitin transformation
+// assume e is an expression consisting of a bi-implication with left-child = variable & right-child = single-operator expression
 func CNF(e operators.Expression) operators.CNF {
 	log.Println("cnf(", e.LeftChild(), e, e.RightChild().LeftChild(), e.RightChild(), e.RightChild().RightChild(), ")")
+	nnf := NNF(e)
+	log.Println(nnf)
+
 	//panic("not implemented")
 	return nil
 }

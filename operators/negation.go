@@ -20,8 +20,9 @@ func (n *Negation) SetRightChild(node Node) {
 
 // Normalize of a negation is still a negation
 func (n *Negation) Normalize() Expression {
-	n.SetLeftChild(n.LeftChild().Normalize())
-	return n
+	return &Negation{
+		T: n.LeftChild().Normalize(),
+	}
 }
 
 func (n *Negation) NodeEquivalent(o Node) bool {

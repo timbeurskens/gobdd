@@ -53,7 +53,7 @@ func TestCNFXorUnsat(t *testing.T) {
 	}))
 }
 
-func TestCDCLTseitin(t *testing.T) {
+func testCDCLTseitin(t *testing.T) {
 	be := bdd_test.Bench{T: t}
 
 	p, q, r, s := operators.Var("p"), operators.Var("q"), operators.Var("r"), operators.Var("s")
