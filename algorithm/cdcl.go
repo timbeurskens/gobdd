@@ -46,20 +46,11 @@ func (s *CDCLStack) UnitPropagate(clause operators.CNFClause) {
 	log.Println("propagate", clause, *s)
 }
 
-func (s *CDCLStack) Backtrack2() operators.Term {
+func (s *CDCLStack) Backtrack() operators.Term {
 	var last int
 	s.Indexes, last = s.Indexes[:len(s.Indexes)-1], s.Indexes[len(s.Indexes)-1]
 	term := s.Clauses[last].(operators.Term)
 	s.Clauses = s.Clauses[:last]
-	log.Println("backtrack", *s)
-	return term
-}
-
-func (s *CDCLStack) Backtrack() operators.Term {
-	var last int
-	s.Indexes, last = s.Indexes[:len(s.Indexes)-1], s.Indexes[len(s.Indexes)-1]
-	term := s.Clauses[last].(operators.Term).Negate()
-	s.Clauses = append(s.Clauses[:last], term)
 	log.Println("backtrack", *s)
 	return term
 }
@@ -82,10 +73,10 @@ func ModelFromCDCLStack(stack *CDCLStack, variables []operators.Term) (model ope
 
 	var trueTree, falseTree operators.Node
 
-	if stack.IsTrue(choiceVar) {
+	if stack.IsTrue(choiceVar) && !stack.IsTrue(choiceVar.Negate()) {
 		trueTree = ModelFromCDCLStack(stack, remaining)
 		falseTree = &operators.FalseConst
-	} else if stack.IsTrue(choiceVar.Negate()) {
+	} else if stack.IsTrue(choiceVar.Negate()) && !stack.IsTrue(choiceVar) {
 		trueTree = &operators.FalseConst
 		falseTree = ModelFromCDCLStack(stack, remaining)
 	} else {
@@ -143,7 +134,7 @@ func recursiveCDCL(v operators.Term, variables []operators.Term, stack *CDCLStac
 		return true
 	}
 
-	term := stack.Backtrack2()
+	term := stack.Backtrack()
 	vNeg := term.Negate()
 	stack.Decide(term.Negate())
 	if recursiveCDCL(vNeg, remaining, stack) {
@@ -152,7 +143,7 @@ func recursiveCDCL(v operators.Term, variables []operators.Term, stack *CDCLStac
 		return true
 	}
 
-	stack.Backtrack2()
+	stack.Backtrack()
 
 	// helaas
 	// unsat

@@ -1,30 +1,31 @@
 package gobdd
 
 import (
-    "testing"
+	"testing"
 
-    "gobdd/algorithm"
-    "gobdd/bdd_test"
-    . "gobdd/operators"
-    bdd2 "gobdd/operators/bdd"
+	"gobdd/algorithm"
+	"gobdd/bdd_test"
+	. "gobdd/operators"
+	bdd2 "gobdd/operators/bdd"
 )
 
 func TestJan2020ex1b(t *testing.T) {
-    b := bdd_test.Bench{T: t}
-    p, q, r, s := Var("p"), Var("q"), Var("r"), Var("s")
+	b := bdd_test.Bench{T: t}
+	p, q, r, s := Var("p"), Var("q"), Var("r"), Var("s")
 
-    // this example shows potential improvements to the tool: sharing for term s is possible
-    expr := And(Biimplies(s, q), Or(r, Not(p)))
-    bdd := algorithm.FromExpression(expr)
-    DotSubtree(bdd)
+	// this example shows potential improvements to the tool: sharing for term s is possible
+	expr := And(Biimplies(s, q), Or(r, Not(p)))
 
-    b.AssertSat("(s <-> q) && (r || -p)", bdd)
+	bdd := algorithm.FromExpression(algorithm.PruneUnary(expr))
+	DotSubtree(bdd)
 
-    model, ok := bdd2.FindModel(bdd)
-    t.Log(ok, model)
-    b.Assert("bdd has model", ok)
+	b.AssertSat("(s <-> q) && (r || -p)", bdd)
 
-    counter, ok := bdd2.FindCounterExample(bdd)
-    t.Log(ok, counter)
-    b.Assert("bdd also has counterexample", ok)
+	model, ok := bdd2.FindModel(bdd)
+	t.Log(ok, model)
+	b.Assert("bdd has model", ok)
+
+	counter, ok := bdd2.FindCounterExample(bdd)
+	t.Log(ok, counter)
+	b.Assert("bdd also has counterexample", ok)
 }

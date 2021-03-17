@@ -20,7 +20,7 @@ func TestConjNeg(t *testing.T) {
 	p := Var("p")
 
 	falseTree := algorithm.FromExpression(Cons(false))
-	pTree := algorithm.FromExpression(And(p, Not(p)))
+	pTree := algorithm.FromExpression(algorithm.PruneUnary(And(p, Not(p))))
 
 	t.Log(pTree)
 
@@ -80,7 +80,7 @@ func TestTautology(t *testing.T) {
 	b.AssertTautology(
 		"p or not p is a tautology",
 		algorithm.FromExpression(
-			Or(p, Not(p)),
+			algorithm.PruneUnary(Or(p, Not(p))),
 		),
 	)
 }
