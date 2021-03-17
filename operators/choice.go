@@ -6,6 +6,11 @@ type Choice struct {
 	False Node
 }
 
+func (c *Choice) Normalize() Expression {
+	panic("normalization of choices is not supported")
+	return nil
+}
+
 func (c *Choice) SetLeftChild(n Node) {
 	c.True = n
 }

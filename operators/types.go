@@ -8,6 +8,8 @@ type Node interface {
 	RightChild() Node
 	SetLeftChild(n Node)
 	SetRightChild(n Node)
+	// todo: enable Normalize function for tseitin transformations
+	Normalize() Expression
 	fmt.Stringer
 }
 
@@ -22,8 +24,6 @@ type Term interface {
 
 type Expression interface {
 	Node
-	// todo: enable Normalize function for tseitin transformations
-	// Normalize() Expression
 }
 
 type Operator interface {
@@ -41,6 +41,7 @@ type Variable interface {
 
 type Constant interface {
 	Expression
+	Term
 	Value() bool
 }
 

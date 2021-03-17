@@ -14,9 +14,11 @@ func (bi *Biimplication) SetRightChild(n Node) {
 }
 
 // todo: enable normalize function
-// func (bi *Biimplication) Normalize() Expression {
-//     return And(Implies(bi.LeftChild(), bi.RightChild()).(Operator).Normalize(), Implies(bi.RightChild(), bi.LeftChild()).(Operator).Normalize())
-// }
+func (bi *Biimplication) Normalize() Expression {
+	ltor := Implies(bi.LeftChild(), bi.RightChild()).Normalize()
+	rtol := Implies(bi.RightChild(), bi.LeftChild()).Normalize()
+	return And(ltor, rtol)
+}
 
 func (bi *Biimplication) String() string {
 	return "⟷"

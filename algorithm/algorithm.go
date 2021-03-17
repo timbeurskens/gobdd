@@ -40,7 +40,7 @@ func PruneUnary(e operators.Expression) operators.Expression {
 	if e == nil {
 		return nil
 	} else if v, ok := e.(*operators.Negation); ok {
-		return operators.Implies(PruneUnary(v.Negate()), operators.Cons(false))
+		return operators.Implies(PruneUnary(v.T), operators.Cons(false))
 	} else {
 		left := PruneUnary(e.LeftChild())
 		right := PruneUnary(e.RightChild())

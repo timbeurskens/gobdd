@@ -1,6 +1,7 @@
 package algorithm
 
 import (
+	bdd2 "gobdd/operators/bdd"
 	"testing"
 
 	"gobdd/bdd_test"
@@ -50,4 +51,30 @@ func TestCNFXorUnsat(t *testing.T) {
 		operators.NClause{a.Negate(), a.Negate()},
 		operators.NClause{a, a},
 	}))
+}
+
+func TestCDCLTseitin(t *testing.T) {
+	be := bdd_test.Bench{T: t}
+
+	p, q, r, s := operators.Var("p"), operators.Var("q"), operators.Var("r"), operators.Var("s")
+
+	// this example shows potential improvements to the tool: sharing for term s is possible
+	expr := operators.And(operators.Biimplies(s, q), operators.Or(r, operators.Not(p)))
+
+	// convert to NNF
+	nnf := NNF(expr)
+
+	cnf := TransformTseitin(nnf)
+
+	sat := CDCL(cnf)
+
+	be.AssertSat("(s <-> q) && (r || -p)", sat)
+
+	model, ok := bdd2.FindModel(sat)
+	t.Log(ok, model)
+	be.Assert("bdd has model", ok)
+
+	counter, ok := bdd2.FindCounterExample(sat)
+	t.Log(ok, counter)
+	be.Assert("bdd also has counterexample", ok)
 }

@@ -14,9 +14,9 @@ func (e *ExclusiveDisjunction) SetRightChild(n Node) {
 }
 
 // todo: enable Normalize function
-// func (e *ExclusiveDisjunction) Normalize() Expression {
-//     return And(Or(e.LeftChild(), e.RightChild()), Not(And(e.LeftChild(), e.RightChild())).(Operator).Normalize())
-// }
+func (e *ExclusiveDisjunction) Normalize() Expression {
+	return And(Or(e.LeftChild(), e.RightChild()), Not(And(e.LeftChild(), e.RightChild())).Normalize())
+}
 
 func (e *ExclusiveDisjunction) String() string {
 	return "⊗"

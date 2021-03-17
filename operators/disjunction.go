@@ -14,6 +14,8 @@ func (d *Disjunction) SetRightChild(n Node) {
 }
 
 func (d *Disjunction) Normalize() Expression {
+	d.SetLeftChild(d.LeftChild().Normalize())
+	d.SetRightChild(d.RightChild().Normalize())
 	return d
 }
 

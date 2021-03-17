@@ -64,13 +64,13 @@ func TestEquivalence(t *testing.T) {
 
 	p, q := Var("p"), Var("q")
 
-	b.AssertEquivalent("p xor q is equivalent to not(p biimplication q)", algorithm.FromExpression(Xor(p, q)), algorithm.FromExpression(Not(Biimplies(p, q))))
+	b.AssertEquivalent("p xor q is equivalent to not(p biimplication q)", algorithm.FromExpression(Xor(p, q)), algorithm.FromExpression(algorithm.PruneUnary(Not(Biimplies(p, q)))))
 }
 
 func TestImplication(t *testing.T) {
 	b := bdd_test.Bench{T: t}
 	p := Var("p")
-	b.AssertUnsat("not p implies true is unsatisfiable", algorithm.FromExpression(Not(Implies(p, Cons(true)))))
+	b.AssertUnsat("not p implies true is unsatisfiable", algorithm.FromExpression(algorithm.PruneUnary(Not(Implies(p, Cons(true))))))
 }
 
 func TestTautology(t *testing.T) {

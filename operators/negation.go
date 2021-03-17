@@ -1,7 +1,7 @@
 package operators
 
 type Negation struct {
-	T Node
+	T Expression
 }
 
 func (n *Negation) Variable() Variable {
@@ -18,7 +18,9 @@ func (n *Negation) SetRightChild(node Node) {
 	}
 }
 
+// Normalize of a negation is still a negation
 func (n *Negation) Normalize() Expression {
+	n.SetLeftChild(n.LeftChild().Normalize())
 	return n
 }
 
@@ -28,7 +30,7 @@ func (n *Negation) NodeEquivalent(o Node) bool {
 }
 
 func (n *Negation) LeftChild() Node {
-	return nil
+	return n.T
 }
 
 func (n *Negation) RightChild() Node {

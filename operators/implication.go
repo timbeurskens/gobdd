@@ -14,12 +14,11 @@ func (i *Implication) SetRightChild(n Node) {
 }
 
 // todo: enable normalize function
-// func (i *Implication) Normalize() Expression {
-//     lnorm := i.LeftChild().(Expression).Normalize()
-//
-//     neg := Not().Normalize()
-//     return Or(neg, i.RightChild().(Expression).Normalize())
-// }
+func (i *Implication) Normalize() Expression {
+	left := Not(i.LeftChild()).Normalize()
+	right := i.RightChild().Normalize()
+	return Or(left, right)
+}
 
 func (i *Implication) String() string {
 	return "→"
