@@ -3,6 +3,7 @@ package algorithm
 import (
 	"gobdd/operators"
 	"gobdd/operators/bdd"
+	"reflect"
 )
 
 // todo: optimization:
@@ -42,13 +43,21 @@ func PruneUnary(e operators.Expression) operators.Expression {
 	} else if v, ok := e.(*operators.Negation); ok {
 		return operators.Implies(PruneUnary(v.T), operators.Cons(false))
 	} else {
+		// only prune nodes with children
+		if e.LeftChild() == nil && e.RightChild() == nil {
+			return e
+		}
+
+		tp := reflect.ValueOf(e).Elem().Type()
+		clone := reflect.New(tp).Interface().(operators.Expression)
+
 		left := PruneUnary(e.LeftChild())
 		right := PruneUnary(e.RightChild())
 
-		e.SetLeftChild(left)
-		e.SetRightChild(right)
+		clone.SetLeftChild(left)
+		clone.SetRightChild(right)
 
-		return e
+		return clone
 	}
 }
 

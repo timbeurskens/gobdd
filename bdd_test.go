@@ -52,6 +52,16 @@ func TestUnsat(t *testing.T) {
 	b.AssertUnsat("false is unsatisfiable", algorithm.FromExpression(Cons(false)))
 }
 
+func TestUnsat2(t *testing.T) {
+	b := bdd_test.Bench{T: t}
+
+	p := Var("p")
+
+	expr := algorithm.PruneUnary(And(p, p.Negate()))
+
+	b.AssertUnsat("false is unsatisfiable", algorithm.FromExpression(expr))
+}
+
 func TestEquivalence1(t *testing.T) {
 	b := bdd_test.Bench{T: t}
 

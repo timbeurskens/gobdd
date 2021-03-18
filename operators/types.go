@@ -1,6 +1,8 @@
 package operators
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Node interface {
 	NodeEquivalent(n Node) bool
@@ -55,11 +57,18 @@ func (cnf CNF) Expr() Expression {
 	intermediate := make([]Expression, 0, len(cnf))
 	for _, clause := range cnf {
 		terms := clause.Terms()
+
 		exprs := make([]Expression, len(terms))
+
 		for i := range terms {
 			exprs[i] = terms[i]
 		}
-		intermediate = append(intermediate, Or(exprs...))
+
+		if len(terms) > 1 {
+			intermediate = append(intermediate, Or(exprs...))
+		} else {
+			intermediate = append(intermediate, exprs...)
+		}
 	}
 	return And(intermediate...)
 }
