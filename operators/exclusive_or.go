@@ -13,7 +13,6 @@ func (e *ExclusiveDisjunction) SetRightChild(n Node) {
 	e.B = n
 }
 
-// todo: enable Normalize function
 func (e *ExclusiveDisjunction) Normalize() Expression {
 	left, right := e.LeftChild().Normalize(), e.RightChild().Normalize()
 	return And(

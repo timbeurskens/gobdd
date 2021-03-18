@@ -13,7 +13,6 @@ func (bi *Biimplication) SetRightChild(n Node) {
 	bi.B = n
 }
 
-// todo: enable normalize function
 func (bi *Biimplication) Normalize() Expression {
 	ltor := Implies(bi.LeftChild(), bi.RightChild()).Normalize()
 	rtol := Implies(bi.RightChild(), bi.LeftChild()).Normalize()
