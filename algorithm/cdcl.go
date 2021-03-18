@@ -1,8 +1,6 @@
 package algorithm
 
 import (
-	"log"
-
 	"gobdd/operators"
 )
 
@@ -38,12 +36,12 @@ func (s *CDCLStack) Decide(term operators.Term) {
 	position := len(s.Clauses)
 	s.Clauses = append(s.Clauses, term)
 	s.Indexes = append(s.Indexes, position)
-	log.Println("decide", term, *s)
+	//log.Println("decide", term, *s)
 }
 
 func (s *CDCLStack) UnitPropagate(clause operators.CNFClause) {
 	s.Clauses = append(s.Clauses, clause)
-	log.Println("propagate", clause, *s)
+	//log.Println("propagate", clause, *s)
 }
 
 func (s *CDCLStack) Backtrack() operators.Term {
@@ -51,7 +49,7 @@ func (s *CDCLStack) Backtrack() operators.Term {
 	s.Indexes, last = s.Indexes[:len(s.Indexes)-1], s.Indexes[len(s.Indexes)-1]
 	term := s.Clauses[last].(operators.Term)
 	s.Clauses = s.Clauses[:last]
-	log.Println("backtrack", *s)
+	//log.Println("backtrack", *s)
 	return term
 }
 

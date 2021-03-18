@@ -6,24 +6,29 @@ import (
 	"testing"
 
 	"gobdd/bdd_test"
-	"gobdd/operators"
+	op "gobdd/operators"
 )
 
 var (
-	a = operators.Var("a")
-	b = operators.Var("b")
-	c = operators.Var("c")
+	a = op.Var("a")
+	b = op.Var("b")
+	c = op.Var("c")
+	d = op.Var("d")
 
-	expressions = []operators.Expression{
-		operators.Implies(a, b),
-		operators.Biimplies(a, b),
-		operators.And(a, operators.Not(a)),
-		operators.Biimplies(a, operators.Implies(b, c)),
-		operators.Xor(a, b),
-		operators.Implies(operators.Biimplies(a, b), operators.And(operators.Or(b, c), a)),
-		operators.Or(a, b, c),
-		operators.And(a, b, c),
-		operators.Not(operators.Or(a, b)),
+	expressions = []op.Expression{
+		op.Implies(a, b),
+		op.Biimplies(a, b),
+		op.And(a, op.Not(a)),
+		op.Biimplies(a, op.Implies(b, c)),
+		op.Xor(a, b),
+		op.Implies(op.Biimplies(a, b), op.And(op.Or(b, c), a)),
+		op.Or(a, b, c),
+		op.And(a, b, c),
+		op.Not(op.Or(a, b)),
+		op.Not(op.Xor(a, b)),
+		op.And(op.Or(&op.TrueConst, a), op.And(b, &op.FalseConst)),
+		op.And(op.Xor(c, a), op.Or(b, op.Xor(a, op.Xor(b, c)))),
+		op.Biimplies(a, op.Biimplies(b, op.Biimplies(c, d))),
 	}
 )
 

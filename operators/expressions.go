@@ -9,7 +9,9 @@ package operators
 //}
 
 func Not(e Expression) Expression {
-	if term, ok := e.(Term); ok {
+	if neg, ok := e.(*Negation); ok {
+		return neg.LeftChild()
+	} else if term, ok := e.(Term); ok {
 		return term.Negate()
 	}
 	return &Negation{e}
