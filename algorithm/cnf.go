@@ -2,14 +2,64 @@ package algorithm
 
 import (
 	"gobdd/operators"
-	"log"
 )
 
 // CNF should yield 3-clause elements, to be used by Tseitin transformation
-func CNF(e operators.Expression) operators.CNF {
-	log.Println("cnf(", e.LeftChild(), e, e.RightChild().LeftChild(), e.RightChild(), e.RightChild().RightChild(), ")")
-	//panic("not implemented")
-	return nil
+// assume e is an expression consisting of a bi-implication with left-child = variable & right-child = single-operator expression
+func CNF(e operators.Expression) (cnf operators.CNF) {
+	cnf = make(operators.CNF, 0, 4)
+
+	leftVar, ok := e.LeftChild().(operators.Variable)
+	if !ok {
+		panic("cnf: left is not a variable")
+	}
+
+	switch e.RightChild().(type) {
+	case operators.Variable:
+		rightVar := e.RightChild().(operators.Term)
+		cnf = append(cnf, operators.CNF{
+			operators.NClause{leftVar, rightVar.Negate()},
+			operators.NClause{leftVar.Negate(), rightVar},
+		}...)
+	case *operators.Negation:
+		rightVar := e.RightChild().(operators.Term)
+		cnf = append(cnf, operators.CNF{
+			operators.NClause{leftVar, rightVar.Negate()},
+			operators.NClause{leftVar.Negate(), rightVar},
+		}...)
+	case *operators.Disjunction:
+		dis := e.RightChild().(*operators.Disjunction)
+		l, r := dis.LeftChild().(operators.Term), dis.RightChild().(operators.Term)
+		cnf = append(cnf, operators.CNF{
+			operators.NClause{leftVar.Negate(), l, r},
+			operators.NClause{leftVar, l.Negate()},
+			operators.NClause{leftVar, r.Negate()},
+		}...)
+	case *operators.Conjunction:
+		dis := e.RightChild().(*operators.Conjunction)
+		l, r := dis.LeftChild().(operators.Term), dis.RightChild().(operators.Term)
+		cnf = append(cnf, operators.CNF{
+			operators.NClause{leftVar, l.Negate(), r.Negate()},
+			operators.NClause{leftVar.Negate(), l},
+			operators.NClause{leftVar.Negate(), r},
+		}...)
+	case operators.Constant:
+		c := e.RightChild().(operators.Constant)
+		var t operators.Term
+
+		if c.Value() {
+			t = leftVar
+		} else {
+			t = leftVar.Negate()
+		}
+		cnf = append(cnf, operators.CNF{
+			t,
+		}...)
+	default:
+		panic("unrecognized right side")
+	}
+
+	return
 }
 
 func DeMorgan(e operators.Expression) operators.Expression {

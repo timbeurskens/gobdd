@@ -91,12 +91,12 @@ func ModelFromCDCLStack(stack *CDCLStack, variables []operators.Term) (model ope
 }
 
 // CDCL implements the conflict-driven-clause-learning algorithm
-func CDCL(cnf operators.CNF) (model operators.Node) {
+func CDCL(cnf operators.CNF) (sat bool, model operators.Node) {
 	stack := NewCDCLStack(cnf)
 
 	variables := operators.Variables(cnf)
 
-	_ = operators.Cons(recursiveCDCL(nil, variables, stack))
+	sat = recursiveCDCL(nil, variables, stack)
 
 	model = ModelFromCDCLStack(stack, variables)
 

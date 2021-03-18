@@ -121,7 +121,7 @@ func (c *IntVariable) Negate() Term {
 }
 
 func (c *IntVariable) TermEquivalent(t Term) bool {
-	other, ok := t.(*StringVariable)
+	other, ok := t.(*IntVariable)
 	return ok && c.NodeEquivalent(other)
 }
 
