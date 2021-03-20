@@ -10,7 +10,6 @@ type Node interface {
 	RightChild() Node
 	SetLeftChild(n Node)
 	SetRightChild(n Node)
-	// todo: enable Normalize function for tseitin transformations
 	Normalize() Expression
 	fmt.Stringer
 }

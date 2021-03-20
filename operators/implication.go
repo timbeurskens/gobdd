@@ -13,7 +13,6 @@ func (i *Implication) SetRightChild(n Node) {
 	i.B = n
 }
 
-// todo: enable normalize function
 func (i *Implication) Normalize() Expression {
 	left := Not(i.LeftChild()).Normalize()
 	right := i.RightChild().Normalize()
