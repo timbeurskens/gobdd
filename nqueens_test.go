@@ -12,7 +12,7 @@ import (
 )
 
 func TestNQueensCDCL(t *testing.T) {
-	const n = 5
+	const n = 4
 
 	b := bdd_test.Bench{T: t}
 
@@ -39,7 +39,7 @@ func TestNQueensCDCL(t *testing.T) {
 }
 
 func TestNQueens(t *testing.T) {
-	const n = 6
+	const n = 4
 
 	b := bdd_test.Bench{T: t}
 
