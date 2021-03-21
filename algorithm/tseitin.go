@@ -23,10 +23,10 @@ func TransformTseitin(e operators.Expression) operators.CNF {
 	for len(queue) > 0 {
 		work, queue = queue[0], queue[1:]
 
-		i++
-		leftVar = operators.IVar(i)
-		i++
-		rightVar = operators.IVar(i)
+		leftVar = operators.IVar(i + 1)
+		rightVar = operators.IVar(i + 2)
+
+		i += 2
 
 		switch work[1].(type) {
 		case operators.Constant:
