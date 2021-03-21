@@ -2,6 +2,7 @@ package gobdd
 
 import (
 	"fmt"
+	"log"
 	"testing"
 
 	"gobdd/algorithm"
@@ -10,8 +11,35 @@ import (
 	bdd2 "gobdd/operators/bdd"
 )
 
+func TestNQueensCDCL(t *testing.T) {
+	const n = 5
+
+	b := bdd_test.Bench{T: t}
+
+	expr := makeNQueensExpression(n)
+	nnf := algorithm.NNF(expr)
+	cnf := algorithm.TransformTseitin(nnf)
+
+	log.Println(cnf)
+
+	sat, solution := algorithm.CDCL(cnf)
+
+	b.Assert("n-queens cdcl is SAT", sat)
+
+	if model, ok := bdd2.FindModel(solution); ok {
+		queens_r := model.Variables(true)
+		queens := make([]Variable, 0, len(queens_r))
+		for _, q := range queens_r {
+			if _, ok := q.(*StringVariable); ok {
+				queens = append(queens, q)
+			}
+		}
+		b.AssertInfo("there are n queens", len(queens) == n, queens)
+	}
+}
+
 func TestNQueens(t *testing.T) {
-	const n = 4
+	const n = 6
 
 	b := bdd_test.Bench{T: t}
 

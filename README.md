@@ -1,5 +1,7 @@
 # GoBDD: Binary Decision Diagram implementation in Go
 
+[![Go](https://github.com/timbeurskens/gobdd/actions/workflows/go.yml/badge.svg)](https://github.com/timbeurskens/gobdd/actions/workflows/go.yml)
+
 This project attempts to implement a simple boolean satifiability solver in Go using Reduced-ordered Binary Decision Diagrams.
 Users can define their boolean equations and apply the BDD transformation to get a ROBDD (in Graphviz Dot format).
 Additional testing methods are available to test for tautologies, contradictions and equivalence.
