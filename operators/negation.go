@@ -8,20 +8,20 @@ func (n *Negation) Variable() Variable {
 	return n.Negate().Variable()
 }
 
-func (n *Negation) SetLeftChild(node Node) {
-	n.T = node
+func (n *Negation) SetLeftChild(Node) {
+	if n != nil {
+		panic("negation has no left child")
+	}
 }
 
 func (n *Negation) SetRightChild(node Node) {
-	if n != nil {
-		panic("negation has no right child")
-	}
+	n.T = node
 }
 
 // Normalize of a negation is still a negation
 func (n *Negation) Normalize() Expression {
 	return &Negation{
-		T: n.LeftChild().Normalize(),
+		T: n.RightChild().Normalize(),
 	}
 }
 
@@ -31,11 +31,11 @@ func (n *Negation) NodeEquivalent(o Node) bool {
 }
 
 func (n *Negation) LeftChild() Node {
-	return n.T
+	return nil
 }
 
 func (n *Negation) RightChild() Node {
-	return nil
+	return n.T
 }
 
 func (n *Negation) Terms() []Term {
@@ -55,7 +55,7 @@ func (n *Negation) Exclude(term Term) CNFClause {
 }
 
 func (n *Negation) String() string {
-	return "¬" + n.T.String()
+	return "¬"
 }
 
 func (n *Negation) NumTerms() int {

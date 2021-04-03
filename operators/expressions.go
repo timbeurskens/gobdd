@@ -10,7 +10,7 @@ package operators
 
 func Not(e Expression) Expression {
 	if neg, ok := e.(*Negation); ok {
-		return neg.LeftChild()
+		return neg.RightChild()
 	} else if term, ok := e.(Term); ok {
 		return term.Negate()
 	}

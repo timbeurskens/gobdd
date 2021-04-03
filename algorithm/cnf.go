@@ -64,7 +64,7 @@ func CNF(e operators.Expression) (cnf operators.CNF) {
 
 func DeMorgan(e operators.Expression) operators.Expression {
 	if neg, ok := e.(*operators.Negation); ok {
-		child := neg.LeftChild()
+		child := neg.RightChild()
 		switch child.(type) {
 		case *operators.Conjunction:
 			return &operators.Disjunction{

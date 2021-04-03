@@ -29,6 +29,19 @@ func PrintSubtree(n operators.Node) {
 	fmt.Print(")")
 }
 
+func PrintExpressiontree(e operators.Expression) string {
+	if e == nil {
+		return ""
+	}
+	if _, ok := e.(operators.Variable); ok {
+		return e.String()
+	}
+	if _, ok := e.(operators.Constant); ok {
+		return e.String()
+	}
+	return fmt.Sprintf("(%s %s %s)", PrintExpressiontree(e.LeftChild()), e.String(), PrintExpressiontree(e.RightChild()))
+}
+
 func DotExpressionTree(n operators.Expression) {
 	fmt.Println("digraph G {")
 	dotExpressionTreeRec(n)

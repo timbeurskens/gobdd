@@ -45,6 +45,8 @@ func TestNQueens(t *testing.T) {
 
 	expr := makeNQueensExpression(n)
 
+	t.Log(PrintExpressiontree(expr))
+
 	// gobdd.DotExpressionTree(expr)
 
 	expr = algorithm.PruneUnary(expr)
@@ -52,8 +54,8 @@ func TestNQueens(t *testing.T) {
 
 	t.Log("Size:", Size(expr), "->", Size(bdd))
 
-	DotExpressionTree(expr)
-	DotSubtree(bdd)
+	//DotExpressionTree(expr)
+	//DotSubtree(bdd)
 
 	b.AssertSat("n-queens is satisfiable", bdd)
 
