@@ -2,6 +2,8 @@ package gobdd
 
 import (
 	"fmt"
+	"io"
+	"os"
 	"reflect"
 	"unsafe"
 
@@ -62,31 +64,63 @@ func dotExpressionTreeRec(n operators.Expression) string {
 	return ""
 }
 
-func DotSubtree(n operators.Node) {
-	fmt.Println("digraph G {")
-	fmt.Println(operators.Cons(true).String())
-	fmt.Println(operators.Cons(false).String())
-	dotSubtreeRec(n)
-	fmt.Println("}")
+type DeferError struct {
+	Err error
 }
 
-func dotSubtreeRec(n operators.Node) string {
+func (d *DeferError) Do(err error) error {
+	if d.Err != nil {
+		d.Err = err
+	}
+	return d.Err
+}
+
+func DotSubtreeWriter(n operators.Node, writer io.StringWriter) error {
+	err := DeferError{}
+	var e error
+
+	_, e = writer.WriteString("digraph G {\n")
+	_ = err.Do(e)
+	_, e = writer.WriteString(fmt.Sprintf("%s\n", operators.Cons(true).String()))
+	_ = err.Do(e)
+	_, e = writer.WriteString(fmt.Sprintf("%s\n", operators.Cons(false).String()))
+	_ = err.Do(e)
+
+	dotSubtreeRecWriter(n, writer)
+
+	_, e = writer.WriteString("}\n")
+	_ = err.Do(e)
+
+	return err.Do(nil)
+}
+
+func dotSubtreeRecWriter(n operators.Node, writer io.StringWriter) string {
+	err := DeferError{}
+	var e error
+
 	switch n.(type) {
 	case *operators.Choice:
 		vname := fmt.Sprintf("%d", unsafe.Pointer(n.(*operators.Choice)))
 		vlabel := n.String()
 
-		fmt.Printf("%s [label=\"%s\"]", vname, vlabel)
-		fmt.Println()
+		_, e = writer.WriteString(fmt.Sprintf("%s [label=\"%s\"]\n", vname, vlabel))
+		_ = err.Do(e)
 
-		vtrue := dotSubtreeRec(n.LeftChild())
-		vfalse := dotSubtreeRec(n.RightChild())
-		fmt.Println(vname, "->", vtrue)
-		fmt.Println(vname, "->", vfalse, "[style=dotted]")
+		vtrue := dotSubtreeRecWriter(n.LeftChild(), writer)
+		vfalse := dotSubtreeRecWriter(n.RightChild(), writer)
+
+		_, e = writer.WriteString(fmt.Sprintf("%s -> %s\n", vname, vtrue))
+		_ = err.Do(e)
+		_, e = writer.WriteString(fmt.Sprintf("%s -> %s [style=dotted]\n", vname, vfalse))
+		_ = err.Do(e)
 
 		return vname
 	case operators.Constant:
 		return n.String()
 	}
 	return ""
+}
+
+func DotSubtree(n operators.Node) error {
+	return DotSubtreeWriter(n, os.Stdout)
 }
