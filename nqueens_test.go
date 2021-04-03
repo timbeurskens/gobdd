@@ -2,13 +2,12 @@ package gobdd
 
 import (
 	"fmt"
+	"github.com/timbeurskens/gobdd/algorithm"
+	"github.com/timbeurskens/gobdd/bdd_test"
+	. "github.com/timbeurskens/gobdd/operators"
+	bdd2 "github.com/timbeurskens/gobdd/operators/bdd"
 	"log"
 	"testing"
-
-	"gobdd/algorithm"
-	"gobdd/bdd_test"
-	. "gobdd/operators"
-	bdd2 "gobdd/operators/bdd"
 )
 
 func TestNQueensCDCL(t *testing.T) {

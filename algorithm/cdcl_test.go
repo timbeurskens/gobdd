@@ -1,11 +1,10 @@
 package algorithm
 
 import (
-	bdd2 "gobdd/operators/bdd"
+	"github.com/timbeurskens/gobdd/bdd_test"
+	"github.com/timbeurskens/gobdd/operators"
+	bdd2 "github.com/timbeurskens/gobdd/operators/bdd"
 	"testing"
-
-	"gobdd/bdd_test"
-	"gobdd/operators"
 )
 
 func TestSat(t *testing.T) {

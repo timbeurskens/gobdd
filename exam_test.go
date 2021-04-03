@@ -1,12 +1,11 @@
 package gobdd
 
 import (
+	"github.com/timbeurskens/gobdd/algorithm"
+	"github.com/timbeurskens/gobdd/bdd_test"
+	. "github.com/timbeurskens/gobdd/operators"
+	bdd2 "github.com/timbeurskens/gobdd/operators/bdd"
 	"testing"
-
-	"gobdd/algorithm"
-	"gobdd/bdd_test"
-	. "gobdd/operators"
-	bdd2 "gobdd/operators/bdd"
 )
 
 func TestJan2020ex1b(t *testing.T) {

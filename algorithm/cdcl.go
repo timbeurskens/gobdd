@@ -1,7 +1,7 @@
 package algorithm
 
 import (
-	"gobdd/operators"
+	"github.com/timbeurskens/gobdd/operators"
 )
 
 // steps:

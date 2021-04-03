@@ -1,8 +1,8 @@
 package algorithm
 
 import (
-	"gobdd/operators"
-	"gobdd/operators/bdd"
+	"github.com/timbeurskens/gobdd/operators"
+	"github.com/timbeurskens/gobdd/operators/bdd"
 	"reflect"
 )
 

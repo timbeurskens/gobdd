@@ -2,10 +2,9 @@ package bdd_test
 
 import (
 	"fmt"
+	"github.com/timbeurskens/gobdd/operators"
+	"github.com/timbeurskens/gobdd/operators/bdd"
 	"testing"
-
-	"gobdd/operators"
-	"gobdd/operators/bdd"
 )
 
 type Bench struct {

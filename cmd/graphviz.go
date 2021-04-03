@@ -2,11 +2,10 @@ package main
 
 import (
 	"fmt"
-
-	. "gobdd"
-	"gobdd/algorithm"
-	"gobdd/operators"
-	"gobdd/operators/bdd"
+	. "github.com/timbeurskens/gobdd"
+	"github.com/timbeurskens/gobdd/algorithm"
+	"github.com/timbeurskens/gobdd/operators"
+	"github.com/timbeurskens/gobdd/operators/bdd"
 )
 
 func main() {

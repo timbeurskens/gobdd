@@ -1,6 +1,6 @@
 package algorithm
 
-import "gobdd/operators"
+import "github.com/timbeurskens/gobdd/operators"
 
 // TransformTseitin uses the Tseitin transformation to convert an arbitrary expression into CNF
 // assume e is in NNF (negation normal form)

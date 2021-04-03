@@ -1,12 +1,11 @@
 package gobdd
 
 import (
+	"github.com/timbeurskens/gobdd/algorithm"
+	"github.com/timbeurskens/gobdd/bdd_test"
+	. "github.com/timbeurskens/gobdd/operators"
+	"github.com/timbeurskens/gobdd/operators/bdd"
 	"testing"
-
-	"gobdd/algorithm"
-	"gobdd/bdd_test"
-	. "gobdd/operators"
-	"gobdd/operators/bdd"
 )
 
 func TestFalseEquivalence(t *testing.T) {

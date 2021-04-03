@@ -2,11 +2,11 @@ package algorithm
 
 import (
 	"fmt"
-	"gobdd/operators/bdd"
+	"github.com/timbeurskens/gobdd/bdd_test"
+	"github.com/timbeurskens/gobdd/operators/bdd"
 	"testing"
 
-	"gobdd/bdd_test"
-	op "gobdd/operators"
+	op "github.com/timbeurskens/gobdd/operators"
 )
 
 var (

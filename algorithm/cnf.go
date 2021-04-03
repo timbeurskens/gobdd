@@ -1,7 +1,7 @@
 package algorithm
 
 import (
-	"gobdd/operators"
+	"github.com/timbeurskens/gobdd/operators"
 )
 
 // CNF should yield 3-clause elements, to be used by Tseitin transformation

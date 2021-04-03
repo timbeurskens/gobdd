@@ -2,12 +2,11 @@ package gobdd
 
 import (
 	"fmt"
+	"github.com/timbeurskens/gobdd/operators"
 	"io"
 	"os"
 	"reflect"
 	"unsafe"
-
-	"gobdd/operators"
 )
 
 // todo: cleanup
