@@ -1,8 +1,12 @@
 package operators
 
-type ThreeClause [3]Term
+import "fmt"
 
 type NClause []Term
+
+func (N NClause) String() string {
+	return fmt.Sprint([]Term(N))
+}
 
 func (N NClause) Terms() []Term {
 	return N
