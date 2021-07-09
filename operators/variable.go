@@ -53,7 +53,7 @@ func (s *StringVariable) TermEquivalent(t Term) bool {
 	return ok && s.NodeEquivalent(other)
 }
 
-func (s *StringVariable) Less(variable Variable) bool {
+func (s *StringVariable) Leq(variable Variable) bool {
 	return s.String() <= variable.String()
 }
 
@@ -142,7 +142,7 @@ func (c *IntVariable) String() string {
 	return fmt.Sprintf("%d", *c)
 }
 
-func (c *IntVariable) Less(variable Variable) bool {
+func (c *IntVariable) Leq(variable Variable) bool {
 	other, ok := variable.(*IntVariable)
 	return ok && *c <= *other
 }

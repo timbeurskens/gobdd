@@ -36,8 +36,9 @@ type Operator interface {
 type Variable interface {
 	Term
 
+	// Leq returns true iff this is less or equal than variable
 	// todo: variable reordering
-	Less(variable Variable) bool
+	Leq(variable Variable) bool
 }
 
 type Constant interface {
@@ -73,6 +74,7 @@ func (cnf CNF) Expr() Expression {
 }
 
 type CNFClause interface {
+	fmt.Stringer
 	NumTerms() int
 	Terms() []Term
 	HasTerm(term Term) bool

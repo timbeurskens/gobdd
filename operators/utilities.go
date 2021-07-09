@@ -18,7 +18,7 @@ func FindOperatorPropagation(a, b Node, op Operator) (v *Choice, left, right Ope
 
 	// find smallest variable
 	if choka && chokb {
-		if cha.Var.Less(chb.Var) {
+		if cha.Var.Leq(chb.Var) {
 			if chb.Var == cha.Var {
 				return cha, op.Join(a.LeftChild(), b.LeftChild()), op.Join(a.RightChild(), b.RightChild())
 			} else {
