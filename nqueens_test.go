@@ -49,9 +49,11 @@ func TestNQueens(t *testing.T) {
 	// gobdd.DotExpressionTree(expr)
 
 	expr = algorithm.PruneUnary(expr)
+	t.Log("Size:", Size(expr))
+
 	bdd := algorithm.FromExpression(expr)
 
-	t.Log("Size:", Size(expr), "->", Size(bdd))
+	t.Log("Reduced size:", Size(bdd))
 
 	//DotExpressionTree(expr)
 	//DotSubtree(bdd)
