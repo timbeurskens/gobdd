@@ -42,8 +42,7 @@ type Variable interface {
 }
 
 type Constant interface {
-	Expression
-	Term
+	Variable
 	Value() bool
 }
 
