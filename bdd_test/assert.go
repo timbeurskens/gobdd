@@ -40,7 +40,6 @@ func (B Bench) AssertEquivalent(descr string, a, b operators.Node) {
 
 func (B Bench) AssertSat(descr string, a operators.Node) {
 	B.Assert(descr, bdd.Sat(a))
-	B.T.Log(bdd.FindModel(a))
 }
 
 func (B Bench) AssertUnsat(descr string, a operators.Node) {
