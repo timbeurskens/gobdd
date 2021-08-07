@@ -2,11 +2,6 @@ package operators
 
 type BoolConst bool
 
-func (b *BoolConst) Leq(variable Variable) bool {
-	// todo: check if this breaks anything
-	return true
-}
-
 func (b *BoolConst) NumTerms() int {
 	return 1
 }

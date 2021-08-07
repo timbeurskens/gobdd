@@ -13,8 +13,8 @@ import (
 )
 
 // makeNumber equals the variables in a to the binary representation of n
-func makeNumber(a []Variable, n int) Expression {
-	repr := make([]Variable, len(a))
+func makeNumber(a []Term, n int) Expression {
+	repr := make([]Term, len(a))
 
 	for i := range repr {
 		repr[i] = Cons(((n >> i) & 1) == 1)
@@ -23,10 +23,10 @@ func makeNumber(a []Variable, n int) Expression {
 	return makeEquality(a, repr)
 }
 
-func resolveNumber(a []Variable, model Model) int {
+func resolveNumber(a []Term, model Model) int {
 	var result = 0
 	for i := range a {
-		if model[a[i]] {
+		if model[a[i].(Variable)] {
 			result |= 1 << i
 		}
 	}
@@ -34,7 +34,7 @@ func resolveNumber(a []Variable, model Model) int {
 }
 
 func TestNumber(t *testing.T) {
-	a := make([]Variable, 8)
+	a := make([]Term, 8)
 	for i := range a {
 		a[i] = IVar(i)
 	}
@@ -59,7 +59,7 @@ func TestNumber(t *testing.T) {
 }
 
 // makeAddition equals the variables in c to the addition of a and b
-func makeAddition(a, b []Variable, c []Variable) Expression {
+func makeAddition(a, b []Term, c []Term) Expression {
 	if len(a) != len(b) || len(a)+1 != len(c) {
 		panic("length of a and b and carry should match and be 1 smaller than length of c")
 	}
@@ -122,8 +122,8 @@ func TestAddition(t *testing.T) {
 	}
 }
 
-func binaryShift(a []Variable, n int) []Variable {
-	res := make([]Variable, len(a)+n)
+func binaryShift(a []Term, n int) []Term {
+	res := make([]Term, len(a)+n)
 	for i := range res {
 		if i < n {
 			res[i] = Cons(false)
@@ -134,8 +134,8 @@ func binaryShift(a []Variable, n int) []Variable {
 	return res
 }
 
-func zeroPadding(a []Variable, n int) []Variable {
-	res := make([]Variable, len(a)+n)
+func zeroPadding(a []Term, n int) []Term {
+	res := make([]Term, len(a)+n)
 	for i := range res {
 		if i < len(a) {
 			res[i] = a[i]
@@ -147,7 +147,7 @@ func zeroPadding(a []Variable, n int) []Variable {
 }
 
 // makeMultiplication
-func makeMultiplication(a, b []Variable, c []Variable) Expression {
+func makeMultiplication(a, b []Term, c []Term) Expression {
 	if len(a) != len(b) || len(c) != len(a)+len(b) {
 		panic("length of a and b should match and length of c should be a + b")
 	}
@@ -156,7 +156,7 @@ func makeMultiplication(a, b []Variable, c []Variable) Expression {
 	// if a[i] == 0 then inter[i] = inter[i-1]
 	// inter[0] == 0
 
-	inter := make([][]Variable, len(a)+1)
+	inter := make([][]Term, len(a)+1)
 	exprs := make([]Expression, len(a))
 
 	for i := range inter {
@@ -234,7 +234,7 @@ func TestMultiplication(t *testing.T) {
 }
 
 // makeEquality constructs an expression such that a and b should be equal
-func makeEquality(a, b []Variable) Expression {
+func makeEquality(a, b []Term) Expression {
 	if len(a) != len(b) {
 		panic("length of a and b should match")
 	}
@@ -247,7 +247,7 @@ func makeEquality(a, b []Variable) Expression {
 	return And(exprs...)
 }
 
-func makePrimeTest(prime int) (Expression, []Variable, []Variable) {
+func makePrimeTest(prime int) (Expression, []Term, []Term) {
 	// estimate the number of bits needed
 	bits := int(math.Ceil(math.Log2(float64(prime))))
 	bits = 2 + (bits-(bits/2))*2
@@ -276,12 +276,26 @@ func makePrimeTest(prime int) (Expression, []Variable, []Variable) {
 }
 
 func TestIsPrimeCDCL(t *testing.T) {
-	prime := 15
+	prime := 3
 	expr, a, b := makePrimeTest(prime)
 
 	// convert to NNF
 	nnf := algorithm.NNF(expr)
 	cnf := algorithm.TransformTseitin(nnf)
+
+	for i, clause := range cnf {
+		terms := clause.Terms()
+
+		exprs := make([]Expression, len(terms))
+
+		for i := range terms {
+			exprs[i] = terms[i]
+		}
+
+		t.Log(i, PrintExpressiontree(Or(exprs...)))
+	}
+
+	t.Log("variable count: ", len(Variables(cnf)))
 
 	sat, m := algorithm.CDCL(cnf)
 

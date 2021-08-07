@@ -36,14 +36,18 @@ func And(expr ...Expression) Expression {
 }
 
 func Or(expr ...Expression) Expression {
-	if len(expr) > 2 {
+	if len(expr) == 1 {
+		return expr[0]
+	} else if len(expr) > 2 {
 		return Or(expr[0], Or(expr[1:]...))
 	}
 	return &Disjunction{expr[0], expr[1]}
 }
 
 func Xor(expr ...Expression) Expression {
-	if len(expr) > 2 {
+	if len(expr) == 1 {
+		return expr[0]
+	} else if len(expr) > 2 {
 		return Xor(expr[0], Xor(expr[1:]...))
 	}
 	return &ExclusiveDisjunction{expr[0], expr[1]}

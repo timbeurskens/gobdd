@@ -9,8 +9,7 @@ func TransformTseitin(e operators.Expression) operators.CNF {
 	result := make(operators.CNF, 1, nMax)
 	queue := make([][2]operators.Expression, 1, nMax)
 
-	i := 0
-	start := operators.IVar(i)
+	start := operators.IncVar()
 
 	var work [2]operators.Expression
 
@@ -23,10 +22,8 @@ func TransformTseitin(e operators.Expression) operators.CNF {
 	for len(queue) > 0 {
 		work, queue = queue[0], queue[1:]
 
-		leftVar = operators.IVar(i + 1)
-		rightVar = operators.IVar(i + 2)
-
-		i += 2
+		leftVar = operators.IncVar().(operators.Variable)
+		rightVar = operators.IncVar().(operators.Variable)
 
 		switch work[1].(type) {
 		case operators.Constant:
