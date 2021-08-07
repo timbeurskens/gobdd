@@ -53,6 +53,80 @@ func makePrimeTest(prime uint) (operators.Expression, Number, Number) {
 	return operators.And(exprEq, exprMul), a, b
 }
 
+func TestDivision(t *testing.T) {
+	bench := bdd_test.Bench{T: t}
+
+	var src, div uint = 56, 4
+
+	a, b, c := Variable(4), Constant(div, 4), Constant(src, 8)
+
+	// c div b = a; a * b = c
+	expr := Mult(a, b, c)
+
+	// prepare the expression tree
+	expr = algorithm.PruneUnary(expr)
+
+	t.Log("Size before: ", operators.Size(expr))
+
+	// run bdd algorithm
+	tree := algorithm.FromExpression(expr)
+
+	t.Log("Size after:", operators.Size(tree))
+
+	bench.AssertSat("square root of 100 exists", tree)
+
+	if bdd.Sat(tree) {
+		if model, ok := bdd.FindModel(tree); ok {
+			aResolv, err := a.Resolve(model)
+			if err != nil {
+				t.Error(err)
+			}
+			t.Log("56 / 4 =", aResolv)
+
+			if aResolv != src/div {
+				t.Error("division did not produce the right result")
+			}
+		}
+	}
+}
+
+func TestSqrt(t *testing.T) {
+	bench := bdd_test.Bench{T: t}
+
+	var src uint = 100
+
+	a, b := Constant(src, 8), Variable(4)
+
+	// b = sqrt(a); b² = a
+	expr := Mult(b, b, a)
+
+	// prepare the expression tree
+	expr = algorithm.PruneUnary(expr)
+
+	t.Log("Size before: ", operators.Size(expr))
+
+	// run bdd algorithm
+	tree := algorithm.FromExpression(expr)
+
+	t.Log("Size after:", operators.Size(tree))
+
+	bench.AssertSat("square root of 100 exists", tree)
+
+	if bdd.Sat(tree) {
+		if model, ok := bdd.FindModel(tree); ok {
+			bResolv, err := b.Resolve(model)
+			if err != nil {
+				t.Error(err)
+			}
+			t.Log("sqrt(100) =", bResolv)
+
+			if bResolv*bResolv != src {
+				t.Error("sqrt did not produce the right result")
+			}
+		}
+	}
+}
+
 func TestIsPrime(t *testing.T) {
 	bench := bdd_test.Bench{T: t}
 
