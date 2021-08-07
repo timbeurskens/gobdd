@@ -27,7 +27,7 @@ func (b *BoolConst) TermEquivalent(t Term) bool {
 }
 
 func (b *BoolConst) Variable() Variable {
-	panic("a const is not a variable")
+	// panic("a const is not a variable")
 	return nil
 }
 

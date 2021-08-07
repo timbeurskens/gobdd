@@ -42,7 +42,6 @@ type Variable interface {
 }
 
 type Constant interface {
-	Expression
 	Term
 	Value() bool
 }
@@ -64,11 +63,7 @@ func (cnf CNF) Expr() Expression {
 			exprs[i] = terms[i]
 		}
 
-		if len(terms) > 1 {
-			intermediate = append(intermediate, Or(exprs...))
-		} else {
-			intermediate = append(intermediate, exprs...)
-		}
+		intermediate = append(intermediate, Or(exprs...))
 	}
 	return And(intermediate...)
 }
