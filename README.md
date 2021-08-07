@@ -53,6 +53,15 @@ Model-search in both ROBDD-based and CDCL methods is supported by this framework
 | Addition              | +       | Add(Number, Number, Number)       |
 | Multiplication        | ×       | Mult(Number, Number, Number)      |
 
+The package "Numerics" contains arithmetic operations on numeric types, suitable for solving in the SAT-solvers implemented in the algorithms package.
+This version currently only supports numerics of the "Naturals" class: whole numbers greater than, and including zero.
+Integers, fractionals and fixed-point classes could be added in later versions.
+Solving numeric equations requires a significant amount of computing power.
+The current CDCL implementation is not suitable for computing multiplications within reasonable time windows.
+
+Contrary to boolean operations, symbols displayed in the numeric operations table will not be used in any of the produced diagrams by the tool.
+Numeric operations are immediately translated to their boolean counterpart and will be displayed as such.
+
 ## Transformations
 
 ### Unary
