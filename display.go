@@ -2,11 +2,12 @@ package gobdd
 
 import (
 	"fmt"
-	"github.com/timbeurskens/gobdd/operators"
 	"io"
 	"os"
 	"reflect"
 	"unsafe"
+
+	"github.com/timbeurskens/gobdd/operators"
 )
 
 // todo: cleanup
@@ -68,7 +69,7 @@ func dotExpressionTreeRec(n operators.Expression) string {
 		vname := fmt.Sprintf("%d", reflect.ValueOf(n).Pointer())
 		vlabel := n.String()
 
-		fmt.Printf("%s [label=\"%s\"]", vname, vlabel)
+		fmt.Printf("%s [label=\"%s\" shape=box]", vname, vlabel)
 		fmt.Println()
 
 		return vname

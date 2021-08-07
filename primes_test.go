@@ -1,9 +1,13 @@
 package gobdd
 
 import (
+	"fmt"
+	"log"
+	"math"
 	"testing"
 
 	"github.com/timbeurskens/gobdd/algorithm"
+	"github.com/timbeurskens/gobdd/bdd_test"
 	. "github.com/timbeurskens/gobdd/operators"
 	"github.com/timbeurskens/gobdd/operators/bdd"
 )
@@ -130,7 +134,7 @@ func binaryShift(a []Variable, n int) []Variable {
 	return res
 }
 
-func binaryPadding(a []Variable, n int) []Variable {
+func zeroPadding(a []Variable, n int) []Variable {
 	res := make([]Variable, len(a)+n)
 	for i := range res {
 		if i < len(a) {
@@ -143,7 +147,7 @@ func binaryPadding(a []Variable, n int) []Variable {
 }
 
 // makeMultiplication
-func makeMultiplication(a, b []Variable, c []Variable) (Expression, [][]Variable) {
+func makeMultiplication(a, b []Variable, c []Variable) Expression {
 	if len(a) != len(b) || len(c) != len(a)+len(b) {
 		panic("length of a and b should match and length of c should be a + b")
 	}
@@ -171,7 +175,7 @@ func makeMultiplication(a, b []Variable, c []Variable) (Expression, [][]Variable
 			bAdded := makeAddition(inter[i-1], binaryShift(b, i-1), inter[i])
 
 			// add 0 on the i'th step
-			bEq := makeEquality(inter[i], binaryPadding(inter[i-1], 1))
+			bEq := makeEquality(inter[i], zeroPadding(inter[i-1], 1))
 
 			exprs[i-1] = And(
 				// if the i'th factor of a is 1, then add b << i
@@ -183,7 +187,7 @@ func makeMultiplication(a, b []Variable, c []Variable) (Expression, [][]Variable
 	}
 
 	// for every 1 in a, shift b by the position of the 1 in a, then add it to the result
-	return And(exprs...), inter
+	return And(exprs...)
 }
 
 func TestMultiplication(t *testing.T) {
@@ -193,7 +197,7 @@ func TestMultiplication(t *testing.T) {
 	a, b, c := IncVarCollection(a_size), IncVarCollection(b_size), IncVarCollection(a_size+b_size)
 	a_expr := makeNumber(a, a_num)
 	b_expr := makeNumber(b, b_num)
-	c_expr, inter := makeMultiplication(a, b, c)
+	c_expr := makeMultiplication(a, b, c)
 
 	expr := And(a_expr, b_expr, c_expr)
 
@@ -215,13 +219,13 @@ func TestMultiplication(t *testing.T) {
 
 		t.Log(resolveNumber(a, model), resolveNumber(b, model), resolveNumber(c, model))
 
-		for i, num := range inter {
-			if i > 0 {
-				t.Log("inter", i, len(num), model[a[i-1]], resolveNumber(num, model))
-			} else {
-				t.Log("inter", i, len(num), false, resolveNumber(num, model))
-			}
-		}
+		// for i, num := range inter {
+		// 	if i > 0 {
+		// 		t.Log("inter", i, len(num), model[a[i-1]], resolveNumber(num, model))
+		// 	} else {
+		// 		t.Log("inter", i, len(num), false, resolveNumber(num, model))
+		// 	}
+		// }
 
 		if resolveNumber(c, model) != a_num*b_num {
 			t.Fatal("c should be", a_num*b_num)
@@ -243,20 +247,72 @@ func makeEquality(a, b []Variable) Expression {
 	return And(exprs...)
 }
 
-func makePrimesExpression(bits int) Expression {
-	if bits%2 > 0 {
-		bits += 1
+func makePrimeTest(prime int) (Expression, []Variable, []Variable) {
+	// estimate the number of bits needed
+	bits := int(math.Ceil(math.Log2(float64(prime))))
+	bits = 2 + (bits-(bits/2))*2
+
+	log.Printf("Using %d bits for prime computation", bits)
+
+	// construct two arbitrary numbers: a and b
+	a, b := IncVarCollection(bits/2), IncVarCollection(bits/2)
+	// construct a number c
+	c := IncVarCollection(bits)
+
+	exprEq := And(
+		// c is the number to test for prime
+		makeNumber(c, prime),
+		// a != 1
+		Not(makeNumber(a, 1)),
+		// b != 1
+		Not(makeNumber(b, 1)),
+	)
+
+	// c == a * b
+	exprMul := makeMultiplication(a, b, c)
+
+	// a * b == c and c == number to test
+	return And(exprEq, exprMul), a, b
+}
+
+func TestIsPrimeCDCL(t *testing.T) {
+	prime := 15
+	expr, a, b := makePrimeTest(prime)
+
+	// convert to NNF
+	nnf := algorithm.NNF(expr)
+	cnf := algorithm.TransformTseitin(nnf)
+
+	sat, m := algorithm.CDCL(cnf)
+
+	t.Log(sat, m, a, b)
+}
+
+func TestIsPrimeBDD(t *testing.T) {
+	bench := bdd_test.Bench{T: t}
+
+	prime := 15
+	expr, a, b := makePrimeTest(prime)
+
+	// prepare the expression tree
+	expr = algorithm.PruneUnary(expr)
+
+	t.Log(dotExpressionTreeRec(expr))
+
+	// run bdd algorithm
+	tree := algorithm.FromExpression(expr)
+
+	t.Log("Size:", Size(expr), "->", Size(tree))
+
+	bench.AssertUnsat(fmt.Sprintf("%d is prime", prime), tree)
+
+	if bdd.Sat(tree) {
+		if model, ok := bdd.FindModel(tree); ok {
+			aResolv := resolveNumber(a, model)
+			bResolv := resolveNumber(b, model)
+			t.Fatalf("Decomposition of %d: %d x %d", prime, aResolv, bResolv)
+		} else {
+			t.Fatal("Could not construct model of non-prime number")
+		}
 	}
-	half_bits := bits / 2
-
-	allvars := make([]Variable, 2*bits)
-	for i := range allvars {
-		allvars[i] = IVar(i)
-	}
-
-	c := allvars[:bits]
-	a, b := allvars[bits:bits+half_bits], allvars[bits+half_bits:]
-	_ = b
-	return Not(makeEquality(c, a))
-
 }

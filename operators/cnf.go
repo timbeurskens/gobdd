@@ -59,8 +59,8 @@ func Variables(cnf CNF) []Term {
 	for _, clause := range cnf {
 		terms := clause.Terms()
 		for _, term := range terms {
-			normal := term.Variable()
-			if !result.HasTerm(normal) {
+			// term.Variable may return nil
+			if normal := term.Variable(); normal != nil && !result.HasTerm(normal) {
 				result = append(result, normal)
 			}
 		}
