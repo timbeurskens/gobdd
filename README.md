@@ -12,6 +12,63 @@ Tautology and contradiction testing for the CDCL output is not (yet) supported.
 The current (BDD) based method is very inefficient and contains some problems. The N-queens problem can be solved for N=6 in roughly 6 minutes.
 Model-search in both ROBDD-based and CDCL methods is supported by this framework.
 
+## Contents
+
+- [Operators](#operators)
+  - [Boolean](#boolean)
+  - [Numeric](#numeric)
+- [Transformations](#transformations)
+  - [Unary](#unary)
+  - [NNF](#nnf)
+  - [Tseitin](#tseitin)
+- [Solvers](#solvers)
+  - [BDD](#bdd)
+  - [CDCL](#cdcl)
+- [Examples](#examples)
+  - [Tautology test for p or not p](#example-tautology-test-for-p-or-not-p)
+  - [N-queens graphical BDD model](#example-n-queens-graphical-bdd-model)
+  - [CDCL SAT solving](#example-cdcl-sat-solving)
+  - [CDCL after applying the Tseitin transformation](#example-cdcl-after-applying-the-tseitin-transformation)
+  - [Prime decomposition](#example-prime-decomposition) 
+
+## Operators
+
+### Boolean
+
+| Operation             | Symbol | Function signature                |
+|-----------------------|:------:|-----------------------------------|
+| Negation              | ¬      | Not(Expression)                   |
+| Conjunction           | ∧      | And(Expression...)                |
+| Disjunction           | ∨      | Or(Expression...)                 |
+| Exclusive disjunction | ⊗     | Xor(Expression...)                |
+| Implication           | →      | Implies(Expression, Expression)   |
+| Bi-implication        | ⟷     | Biimplies(Expression, Expression) |
+
+### Numeric
+
+| Operation             | Symbol* | Function signature                |
+|-----------------------|:-------:|-----------------------------------|
+| Equality              | =       | Equals(Number, Number)            |
+| Shift                 | ≪      | Shift(Number, int)                |
+| Addition              | +       | Add(Number, Number, Number)       |
+| Multiplication        | ×       | Mult(Number, Number, Number)      |
+
+## Transformations
+
+### Unary
+
+### NNF
+
+### Tseitin
+
+## Solvers
+
+### BDD
+
+### CDCL
+
+## Examples
+
 ### Example: tautology test for p or not p
 
 ```go
@@ -95,4 +152,80 @@ resBdd := FromExpression(pruned)
 
 satBdd := bdd.Sat(resBdd)
 be.Assert("cdcl and bdd are SAT equivalent", satBdd == cdclSat)
+```
+
+### Example: Prime decomposition
+
+```go
+bench := bdd_test.Bench{T: t}
+
+// prime1 and prime2 are invisible to the solver
+var prime1, prime2 uint = 13, 7
+
+// feed the composite number
+combined := prime1 * prime2
+
+// estimate the number of bits needed
+bits := int(math.Ceil(math.Log2(float64(combined))))
+bits = 2 + (bits-(bits/2))*2
+
+log.Printf("Using %d bits for prime computation", bits)
+
+// construct two arbitrary numbers: a and b
+a, b := Variable(bits/2), Variable(bits/2)
+
+// construct a number c
+c := Constant(combined, bits)
+
+one := Constant(1, bits/2)
+
+exprEq := operators.And(
+    // a != 1
+    operators.Not(Equals(a, one)),
+    // b != 1
+    operators.Not(Equals(b, one)),
+)
+
+// c == a * b
+exprMul := Mult(a, b, c)
+
+// a * b == c and c == number to test
+expr := operators.And(exprEq, exprMul)
+
+// prepare the expression tree
+expr = algorithm.PruneUnary(expr)
+
+// run bdd algorithm
+tree := algorithm.FromExpression(expr)
+
+bench.AssertSat(fmt.Sprintf("%d is a composed number", combined), tree)
+
+if bdd.Sat(tree) {
+    if model, ok := bdd.FindModel(tree); ok {
+        aResolv, err := a.Resolve(model)
+        if err != nil {
+            t.Error(err)
+        }
+        bResolv, err := b.Resolve(model)
+        if err != nil {
+            t.Error(err)
+        }
+        t.Logf("Prime-decomposition of %d: %d x %d", combined, aResolv, bResolv)
+
+        if aResolv * bResolv != combined {
+            t.Error("a and b are not a valid decomposition of the original number")
+        }
+    } else {
+        t.Fatal("Could not construct model of non-prime number")
+    }
+}
+```
+
+Output:
+
+```verbose
+> RUN TestPrimeDecomposition
+> Using 10 bits for prime computation
+> Prime-decomposition of 91: 13 x 7
+> PASS: TestPrimeDecomposition (4.45s)
 ```

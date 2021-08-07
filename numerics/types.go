@@ -67,23 +67,3 @@ func Pad(a Number, n int) Number {
 	}
 	return res
 }
-
-// Shift returns the number a, left-shifted by n bits, where n can be less than 0
-func Shift(a Number, n int) Number {
-	// n leq 0: take a sub-slice from the original number
-	if n <= 0 {
-		return a[-n:]
-	}
-
-	// append n leading zeroes
-	res := make([]operators.Term, len(a)+n)
-	for i := range res {
-		if i < n {
-			res[i] = operators.Cons(false)
-		} else {
-			res[i] = a[i-n]
-		}
-	}
-
-	return res
-}

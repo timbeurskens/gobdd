@@ -127,6 +127,70 @@ func TestSqrt(t *testing.T) {
 	}
 }
 
+func TestPrimeDecomposition(t *testing.T) {
+	bench := bdd_test.Bench{T: t}
+
+	// prime1 and prime2 are invisible to the solver
+	var prime1, prime2 uint = 13, 7
+
+	// feed the composite number
+	combined := prime1 * prime2
+
+	// estimate the number of bits needed
+	bits := int(math.Ceil(math.Log2(float64(combined))))
+	bits = 2 + (bits-(bits/2))*2
+
+	log.Printf("Using %d bits for prime computation", bits)
+
+	// construct two arbitrary numbers: a and b
+	a, b := Variable(bits/2), Variable(bits/2)
+	// construct a number c
+	c := Constant(combined, bits)
+
+	one := Constant(1, bits/2)
+
+	exprEq := operators.And(
+		// a != 1
+		operators.Not(Equals(a, one)),
+		// b != 1
+		operators.Not(Equals(b, one)),
+	)
+
+	// c == a * b
+	exprMul := Mult(a, b, c)
+
+	// a * b == c and c == number to test
+	expr := operators.And(exprEq, exprMul)
+
+	// prepare the expression tree
+	expr = algorithm.PruneUnary(expr)
+
+	// run bdd algorithm
+	tree := algorithm.FromExpression(expr)
+
+	bench.AssertSat(fmt.Sprintf("%d is a composed number", combined), tree)
+
+	if bdd.Sat(tree) {
+		if model, ok := bdd.FindModel(tree); ok {
+			aResolv, err := a.Resolve(model)
+			if err != nil {
+				t.Error(err)
+			}
+			bResolv, err := b.Resolve(model)
+			if err != nil {
+				t.Error(err)
+			}
+			t.Logf("Prime-decomposition of %d: %d x %d", combined, aResolv, bResolv)
+
+			if aResolv*bResolv != combined {
+				t.Error("a and b are not a valid decomposition of the original number")
+			}
+		} else {
+			t.Fatal("Could not construct model of non-prime number")
+		}
+	}
+}
+
 func TestIsPrime(t *testing.T) {
 	bench := bdd_test.Bench{T: t}
 
