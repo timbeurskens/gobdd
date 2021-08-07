@@ -276,7 +276,9 @@ func makePrimeTest(prime int) (Expression, []Term, []Term) {
 }
 
 func TestIsPrimeCDCL(t *testing.T) {
-	prime := 3
+	t.Skip("Test is intractable")
+
+	prime := 4
 	expr, a, b := makePrimeTest(prime)
 
 	// convert to NNF
@@ -305,7 +307,7 @@ func TestIsPrimeCDCL(t *testing.T) {
 func TestIsPrimeBDD(t *testing.T) {
 	bench := bdd_test.Bench{T: t}
 
-	prime := 15
+	prime := 17
 	expr, a, b := makePrimeTest(prime)
 
 	// prepare the expression tree
