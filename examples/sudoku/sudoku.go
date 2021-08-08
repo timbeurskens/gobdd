@@ -10,17 +10,22 @@ import (
 	"github.com/timbeurskens/gobdd/operators/bdd"
 	"log"
 	"math"
+	"os"
+	"runtime/pprof"
+	"time"
 )
 
 const (
-	K = 3
+	K = 2
 	N = K * K
 )
 
 var (
-	bits    = 1 + int(math.Ceil(math.Log2(N)))
-	useBdd  = flag.Bool("bdd", false, "enable bdd solver")
-	useCdcl = flag.Bool("cdcl", false, "enable cdcl solver")
+	bits        = 1 + int(math.Ceil(math.Log2(N)))
+	useBdd      = flag.Bool("bdd", false, "enable bdd solver")
+	useCdcl     = flag.Bool("cdcl", false, "enable cdcl solver")
+	cpuProfile  = flag.String("cpuprofile", "", "enable cpu profiler")
+	heapProfile = flag.String("heapprofile", "", "enable heap profiler")
 )
 
 type SudokuHint [N][N]uint
@@ -28,24 +33,24 @@ type SudokuBoard [N][N]numerics.Number
 type Row [N]numerics.Number
 
 var (
-	HardSudokuExample = SudokuHint{
-		{0, 2, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 6, 0, 0, 0, 0, 3},
-		{0, 7, 4, 0, 8, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 3, 0, 0, 3},
-		{0, 8, 0, 0, 4, 0, 0, 1, 0},
-		{6, 0, 0, 5, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 1, 0, 7, 8, 0},
-		{5, 0, 0, 0, 0, 9, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 4, 0},
-	}
-
-	//TwoTwoExample = SudokuHint{
-	//	{3, 4, 1, 0},
-	//	{0, 2, 0, 0},
-	//	{0, 0, 2, 0},
-	//	{0, 1, 4, 3},
+	//HardSudokuExample = SudokuHint{
+	//	{0, 2, 0, 0, 0, 0, 0, 0, 0},
+	//	{0, 0, 0, 6, 0, 0, 0, 0, 3},
+	//	{0, 7, 4, 0, 8, 0, 0, 0, 0},
+	//	{0, 0, 0, 0, 0, 3, 0, 0, 3},
+	//	{0, 8, 0, 0, 4, 0, 0, 1, 0},
+	//	{6, 0, 0, 5, 0, 0, 0, 0, 0},
+	//	{0, 0, 0, 0, 1, 0, 7, 8, 0},
+	//	{5, 0, 0, 0, 0, 9, 0, 0, 0},
+	//	{0, 0, 0, 0, 0, 0, 0, 4, 0},
 	//}
+
+	TwoTwoExample = SudokuHint{
+		{3, 4, 1, 0},
+		{0, 2, 0, 0},
+		{0, 0, 2, 0},
+		{0, 1, 4, 3},
+	}
 )
 
 func (board *SudokuBoard) Row(i int) (result Row) {
@@ -165,10 +170,37 @@ func solveCDCL(expr Expression) (Model, bool) {
 func main() {
 	flag.Parse()
 
+	if *cpuProfile != "" {
+		if fProfile, err := os.Create(*cpuProfile); err != nil {
+			log.Fatal(err)
+		} else {
+			defer fProfile.Close()
+			if err = pprof.StartCPUProfile(fProfile); err != nil {
+				log.Fatal(err)
+			} else {
+				defer pprof.StopCPUProfile()
+			}
+		}
+	}
+
+	if *heapProfile != "" {
+		if fProfile, err := os.Create(*heapProfile); err != nil {
+			log.Fatal(err)
+		} else {
+			defer fProfile.Close()
+			timer := time.NewTimer(1 * time.Second)
+			go func() {
+				for _ = range timer.C {
+					pprof.WriteHeapProfile(fProfile)
+				}
+			}()
+		}
+	}
+
 	log.Printf("Using %d bits", bits)
 
-	defaultHint := &HardSudokuExample
-	//defaultHint := &TwoTwoExample
+	//defaultHint := &HardSudokuExample
+	defaultHint := &TwoTwoExample
 	board, expr := makeSudoku(defaultHint)
 
 	log.Printf(gobdd.PrintExpressiontree(expr))
