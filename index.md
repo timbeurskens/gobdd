@@ -152,7 +152,7 @@ This model is found by solving the following expression:
 ( ¬ p_0_0))) ∧ (( ¬ p_3_3) ∨ ( ¬ p_1_1))) ∧ (( ¬ p_3_3) ∨ ( ¬ p_2_2)))
 ```
 
-![n-queens model](doc/images/bdd.dot.png)
+![n-queens model](/doc/images/bdd.dot.png)
 
 ### Example: CDCL SAT solving
 
