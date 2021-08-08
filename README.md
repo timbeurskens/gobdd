@@ -21,6 +21,8 @@ Model-search in both ROBDD-based and CDCL methods is supported by this framework
   - [Unary](#unary)
   - [NNF](#nnf)
   - [Tseitin](#tseitin)
+  - [CNF](#cnf)
+  - [DeMorgan](#demorgan)
 - [Solvers](#solvers)
   - [BDD](#bdd)
   - [CDCL](#cdcl)
@@ -35,6 +37,9 @@ Model-search in both ROBDD-based and CDCL methods is supported by this framework
 
 ### Boolean
 
+The core building blocks of expressions are boolean operators, constants, and variables.
+Variables can be constructed using the `Var(str)` function, whereas constants are either identified by `TrueConst` and `FalseConst`, or constructed using `Cons(bool)`.
+
 | Operation             | Symbol | Function signature                |
 |-----------------------|:------:|-----------------------------------|
 | Negation              | ¬      | Not(Expression)                   |
@@ -46,6 +51,12 @@ Model-search in both ROBDD-based and CDCL methods is supported by this framework
 
 ### Numeric
 
+The package "Numerics" contains arithmetic operations on numeric types, suitable for solving in the SAT-solvers implemented in the algorithms package.
+This version currently only supports numerics of the "Naturals" class: whole numbers greater than, and including zero.
+Integers, fractionals and fixed-point classes could be added in later versions.
+Solving numeric equations requires a significant amount of computing power.
+The current CDCL implementation is not suitable for computing multiplications within reasonable time windows.
+
 | Operation             | Symbol* | Function signature                |
 |-----------------------|:-------:|-----------------------------------|
 | Equality              | =       | Equals(Number, Number)            |
@@ -53,22 +64,33 @@ Model-search in both ROBDD-based and CDCL methods is supported by this framework
 | Addition              | +       | Add(Number, Number, Number)       |
 | Multiplication        | ×       | Mult(Number, Number, Number)      |
 
-The package "Numerics" contains arithmetic operations on numeric types, suitable for solving in the SAT-solvers implemented in the algorithms package.
-This version currently only supports numerics of the "Naturals" class: whole numbers greater than, and including zero.
-Integers, fractionals and fixed-point classes could be added in later versions.
-Solving numeric equations requires a significant amount of computing power.
-The current CDCL implementation is not suitable for computing multiplications within reasonable time windows.
-
-Contrary to boolean operations, symbols displayed in the numeric operations table will not be used in any of the produced diagrams by the tool.
+*Contrary to boolean operations, symbols displayed in the numeric operations table will not be used in any of the produced diagrams by the tool.
 Numeric operations are immediately translated to their boolean counterpart and will be displayed as such.
 
 ## Transformations
 
 ### Unary
 
+The BDD algorithm (`FromExpression`) assumes only binary operators exist in the given expression.
+If the expression contains any unary operators (negations), the expression can be corrected with the `PruneUnary(Expression)` function.
+The unary elimination algorithm recursively replaces all negations in the subtree according to the following rule:
+
+![formula](https://render.githubusercontent.com/render/math?math=\neg%20a%20\equiv%20a%20\implies%20\bot)
+
+```verbose
+Not(a) = Implies(a, false)
+```
+
 ### NNF
 
+An expression can be converted to negation-normal form such that the result is equivalent and only contains conjunctions, disjunctions and negations.
+All negations in the resulting expression are pushed to the leafs.
+
 ### Tseitin
+
+### CNF
+
+### DeMorgan
 
 ## Solvers
 

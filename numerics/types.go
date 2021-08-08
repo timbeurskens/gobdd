@@ -7,6 +7,15 @@ import (
 
 type Number []operators.Term
 
+func (n Number) IsConstant() bool {
+	for i := range n {
+		if _, ok := n[i].(operators.Variable); ok {
+			return false
+		}
+	}
+	return true
+}
+
 func (n Number) Resolve(model operators.Model) (uint, error) {
 	var result uint = 0
 	for i := range n {

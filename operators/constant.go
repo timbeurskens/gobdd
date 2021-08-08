@@ -2,6 +2,11 @@ package operators
 
 type BoolConst bool
 
+var (
+	TrueConst  BoolConst = true
+	FalseConst BoolConst = false
+)
+
 func (b *BoolConst) NumTerms() int {
 	return 1
 }
@@ -54,11 +59,6 @@ func (b *BoolConst) String() string {
 		return "false"
 	}
 }
-
-var (
-	TrueConst  BoolConst = true
-	FalseConst BoolConst = false
-)
 
 func (b *BoolConst) NodeEquivalent(n Node) bool {
 	other, ok := n.(*BoolConst)
