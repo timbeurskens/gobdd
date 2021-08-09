@@ -19,10 +19,11 @@ Model-search in both ROBDD-based and CDCL methods is supported by this framework
   - [Numeric](#numeric)
 - [Transformations](#transformations)
   - [Unary](#unary)
+  - [Normalize](#normalize)
+  - [DeMorgan](#demorgan)
   - [NNF](#nnf)
   - [Tseitin](#tseitin)
-  - [CNF](#cnf)
-  - [DeMorgan](#demorgan)
+  - [CNF](#cnf)  
 - [Solvers](#solvers)
   - [BDD](#bdd)
   - [CDCL](#cdcl)
@@ -81,22 +82,52 @@ The unary elimination algorithm recursively replaces all negations in the subtre
 Not(a) = Implies(a, false)
 ```
 
+### Normalize
+
+The `Normalize` transformation replaces all operators that are not a conjunction, disjunction or negation to an equivalent expression only containing conjunctions, disjunctions, or negations.
+The following ruleset is applied:
+
+```verbose
+a    ≡ a
+¬a   ≡ ¬a
+a∧b  ≡ a∧b
+a∨b  ≡ a∨b
+a⊗b ≡ (a∨b)∧¬(a∧b)
+a→b  ≡ ¬a∨b
+a⟷b ≡ (¬a∨b)∧(¬b∨a)
+```
+
+### DeMorgan
+
+The De Morgan transformation is applied on [normalized](#normalize) expressions to recursively move all negations to the leafs: variables and/or constants.
+The transformation applies the following ruleset:
+
+```verbose
+¬⊤     ≡ ⊥
+¬⊥     ≡ ⊤
+¬a     ≡ ¬a
+¬(a∧b) ≡ ¬a∨¬b
+¬(a∨b) ≡ ¬a∧¬b
+```
+
 ### NNF
 
 An expression can be converted to negation-normal form such that the result is equivalent and only contains conjunctions, disjunctions and negations.
-All negations in the resulting expression are pushed to the leafs.
+All negations in the resulting expression are pushed to the leafs. The NNF transformation first applies the [normalization](#normalize) transformation, after which a [DeMorgan](#demorgan) transformation is applied to push negations to the leafs.
 
 ### Tseitin
 
-### CNF
+The Tseitin transformation converts an expression in [negation-normal form](#nnf) to a SAT equivalent expression in conjunction-normal form (CNF), suitable for the [CDCL](#cdcl) solver.
 
-### DeMorgan
+### CNF
 
 ## Solvers
 
 ### BDD
 
 ### CDCL
+
+Conflict-driven clause-learning is a CNF-based SAT solving technique.
 
 ## Examples
 
