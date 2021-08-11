@@ -39,9 +39,44 @@ func (s *CDCLStack) Decide(term operators.Term) {
 	//log.Println("decide", term, *s)
 }
 
-func (s *CDCLStack) UnitPropagate(clause operators.CNFClause) {
+func (s *CDCLStack) Push(clause operators.CNFClause) {
 	s.Clauses = append(s.Clauses, clause)
 	//log.Println("propagate", clause, *s)
+}
+
+// UnitPropagate assumes v and updates all clauses in the stack accordingly
+// returns true if the resulting stack is satisfiable (or Undetermined), false if it is definitely unsatisfiable.
+func (s *CDCLStack) UnitPropagate(v operators.Term) bool {
+	if v == nil {
+		return true
+	}
+
+	neg := v.Negate()
+
+	n := len(s.Clauses)
+	count := 0
+	//units := make([]operators.Term, 0, n)
+
+	for i := n - 1; i >= 0; i-- {
+		clause := s.Clauses[i]
+
+		if clause.HasTerm(neg) {
+			if excl := clause.Exclude(neg); excl == nil {
+				// negation
+				return false
+			} else {
+				// UnitPropagate 1
+				s.Push(excl)
+				count++
+
+				// todo: add unit term if it is not yet available in the stack
+			}
+		}
+	}
+
+	return true
+
+	// recursively do unitpropagate until no new units are discovered
 }
 
 func (s *CDCLStack) Backtrack() operators.Term {
@@ -101,49 +136,45 @@ func CDCL(cnf operators.CNF) (sat bool, model operators.Node) {
 	return
 }
 
+// recursiveCDCL recursively searches for a satisfying assignment of term v, such that the expression in the stack is satisfiable.
 func recursiveCDCL(v operators.Term, variables []operators.Term, stack *CDCLStack) bool {
-	if v != nil {
-		neg := v.Negate()
 
-		for i := 0; len(stack.Clauses[i:]) > 0; i = i + 1 {
-			clause := stack.Clauses[i]
-
-			if clause.HasTerm(neg) {
-				if excl := clause.Exclude(neg); excl == nil {
-					// negation!
-					return false
-				} else {
-					stack.UnitPropagate(excl)
-				}
-			}
-		}
+	if !stack.UnitPropagate(v) {
+		// if v holds, the expression is unsatisfiable
+		return false
 	}
 
 	// start recursive process
 	if len(variables) == 0 {
-		return true
-	}
-
-	v, remaining := variables[0], variables[1:]
-	stack.Decide(v)
-	if recursiveCDCL(v, remaining, stack) {
-		// yeah, return
 		// sat
 		return true
 	}
 
+	// pick the top variable
+	// todo: variable selection based on heuristics / ordering
+	v, remaining := variables[0], variables[1:]
+
+	// assume v holds
+	stack.Decide(v)
+
+	if recursiveCDCL(v, remaining, stack) {
+		// sat
+		return true
+	}
+
+	// unsat when v holds, so either v does not hold, or this expression is unsat
+	// assume v does not hold
 	term := stack.Backtrack()
 	vNeg := term.Negate()
 	stack.Decide(term.Negate())
 	if recursiveCDCL(vNeg, remaining, stack) {
-		// yeah, return
 		// sat
 		return true
 	}
 
+	// this expression is unsat
 	stack.Backtrack()
 
-	// helaas
 	// unsat
 	return false
 }
