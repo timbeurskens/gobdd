@@ -4,6 +4,10 @@ import "fmt"
 
 type StringVariable string
 
+func (s *StringVariable) Expr() Expression {
+	return s
+}
+
 func (s *StringVariable) Variable() Variable {
 	return s
 }
@@ -75,6 +79,10 @@ func (s *StringVariable) String() string {
 }
 
 type IntVariable int
+
+func (c *IntVariable) Expr() Expression {
+	return c
+}
 
 func (c *IntVariable) Variable() Variable {
 	return c

@@ -1,7 +1,9 @@
 package algorithm
 
 import (
+	"github.com/timbeurskens/gobdd/display"
 	"github.com/timbeurskens/gobdd/operators"
+	"strings"
 )
 
 // steps:
@@ -13,6 +15,20 @@ import (
 type CDCLStack struct {
 	Clauses operators.CNF
 	Indexes []int
+}
+
+func (s *CDCLStack) Strings() []string {
+	strs := make([]string, len(s.Clauses))
+
+	for i, clause := range s.Clauses {
+		strs[i] = display.PrintExpressiontree(clause.Expr())
+	}
+
+	return strs
+}
+
+func (s *CDCLStack) String() string {
+	return strings.Join(s.Strings(), "\n")
 }
 
 func NewCDCLStack(cnf operators.CNF) *CDCLStack {

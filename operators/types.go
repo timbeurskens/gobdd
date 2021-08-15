@@ -74,6 +74,7 @@ type CNFClause interface {
 	Terms() []Term
 	HasTerm(term Term) bool
 	Exclude(Term) CNFClause
+	Expr() Expression
 }
 
 func IsTerm(clause CNFClause) bool {

@@ -1,4 +1,4 @@
-package gobdd
+package display
 
 import (
 	"fmt"
@@ -44,11 +44,11 @@ func PrintExpressiontree(e operators.Expression) string {
 
 func DotExpressionTree(n operators.Expression) {
 	fmt.Println("digraph G {")
-	dotExpressionTreeRec(n)
+	DotExpressionTreeRec(n)
 	fmt.Println("}")
 }
 
-func dotExpressionTreeRec(n operators.Expression) string {
+func DotExpressionTreeRec(n operators.Expression) string {
 	switch n.(type) {
 	case operators.Operator:
 		vname := fmt.Sprintf("%d", reflect.ValueOf(n).Pointer())
@@ -57,8 +57,8 @@ func dotExpressionTreeRec(n operators.Expression) string {
 		fmt.Printf("%s [label=\"%s\"]", vname, vlabel)
 		fmt.Println()
 
-		vtrue := dotExpressionTreeRec(n.LeftChild())
-		vfalse := dotExpressionTreeRec(n.RightChild())
+		vtrue := DotExpressionTreeRec(n.LeftChild())
+		vfalse := DotExpressionTreeRec(n.RightChild())
 
 		fmt.Println(vname, "->", vtrue)
 		fmt.Println(vname, "->", vfalse, "[style=dotted]")

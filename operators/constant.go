@@ -2,6 +2,10 @@ package operators
 
 type BoolConst bool
 
+func (b *BoolConst) Expr() Expression {
+	return b
+}
+
 var (
 	TrueConst  BoolConst = true
 	FalseConst BoolConst = false

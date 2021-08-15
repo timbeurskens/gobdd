@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/timbeurskens/gobdd"
 	"github.com/timbeurskens/gobdd/algorithm"
+	"github.com/timbeurskens/gobdd/display"
 	"github.com/timbeurskens/gobdd/numerics"
 	. "github.com/timbeurskens/gobdd/operators"
 	"github.com/timbeurskens/gobdd/operators/bdd"
@@ -203,7 +203,7 @@ func main() {
 	defaultHint := &TwoTwoExample
 	board, expr := makeSudoku(defaultHint)
 
-	log.Printf(gobdd.PrintExpressiontree(expr))
+	log.Printf(display.PrintExpressiontree(expr))
 
 	var model Model
 	var ok bool

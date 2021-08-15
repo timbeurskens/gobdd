@@ -4,6 +4,14 @@ import "fmt"
 
 type NClause []Term
 
+func (N NClause) Expr() Expression {
+	subexprs := make([]Expression, len(N))
+	for i, e := range N {
+		subexprs[i] = e
+	}
+	return Or(subexprs...)
+}
+
 func (N NClause) String() string {
 	return fmt.Sprint([]Term(N))
 }

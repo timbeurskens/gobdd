@@ -3,6 +3,7 @@ package gobdd
 import (
 	"github.com/timbeurskens/gobdd/algorithm"
 	"github.com/timbeurskens/gobdd/bdd_test"
+	"github.com/timbeurskens/gobdd/display"
 	. "github.com/timbeurskens/gobdd/operators"
 	"github.com/timbeurskens/gobdd/operators/bdd"
 	"testing"
@@ -35,8 +36,8 @@ func TestComplicated(t *testing.T) {
 	exprTree := algorithm.FromExpression(expr)
 
 	t.Log(expr)
-	PrintSubtree(exprTree)
-	DotSubtree(exprTree)
+	display.PrintSubtree(exprTree)
+	display.DotSubtree(exprTree)
 }
 
 func TestSat(t *testing.T) {

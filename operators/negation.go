@@ -4,6 +4,10 @@ type Negation struct {
 	T Expression
 }
 
+func (n *Negation) Expr() Expression {
+	return n
+}
+
 func (n *Negation) Variable() Variable {
 	return n.Negate().Variable()
 }

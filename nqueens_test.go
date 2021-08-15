@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/timbeurskens/gobdd/algorithm"
 	"github.com/timbeurskens/gobdd/bdd_test"
+	"github.com/timbeurskens/gobdd/display"
 	. "github.com/timbeurskens/gobdd/operators"
 	bdd2 "github.com/timbeurskens/gobdd/operators/bdd"
 	"log"
@@ -44,7 +45,7 @@ func TestNQueens(t *testing.T) {
 
 	expr := makeNQueensExpression(n)
 
-	t.Log(PrintExpressiontree(expr))
+	t.Log(display.PrintExpressiontree(expr))
 
 	// gobdd.DotExpressionTree(expr)
 

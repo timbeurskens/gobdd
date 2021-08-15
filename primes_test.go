@@ -2,6 +2,7 @@ package gobdd
 
 import (
 	"fmt"
+	"github.com/timbeurskens/gobdd/display"
 	"log"
 	"math"
 	"testing"
@@ -39,7 +40,7 @@ func TestNumber(t *testing.T) {
 		a[i] = IVar(i)
 	}
 	expr := makeNumber(a, 97)
-	t.Log(dotExpressionTreeRec(expr))
+	t.Log(display.DotExpressionTreeRec(expr))
 
 	expr = algorithm.PruneUnary(expr)
 	tree := algorithm.FromExpression(expr)
@@ -99,15 +100,15 @@ func TestAddition(t *testing.T) {
 
 	expr := And(a_expr, b_expr, c_expr)
 
-	t.Log(PrintExpressiontree(expr))
-	t.Log(dotExpressionTreeRec(expr))
+	t.Log(display.PrintExpressiontree(expr))
+	t.Log(display.DotExpressionTreeRec(expr))
 
 	expr = algorithm.PruneUnary(expr)
 	tree := algorithm.FromExpression(expr)
 
 	t.Log("Size:", Size(expr), "->", Size(tree))
 
-	DotSubtree(tree)
+	display.DotSubtree(tree)
 
 	if model, ok := bdd.FindModel(tree); ok {
 		t.Log(model)
@@ -203,14 +204,14 @@ func TestMultiplication(t *testing.T) {
 
 	expr = algorithm.PruneUnary(expr)
 
-	t.Log(PrintExpressiontree(expr))
-	t.Log(dotExpressionTreeRec(expr))
+	t.Log(display.PrintExpressiontree(expr))
+	t.Log(display.DotExpressionTreeRec(expr))
 
 	tree := algorithm.FromExpression(expr)
 
 	t.Log("Size:", Size(expr), "->", Size(tree))
 
-	DotSubtree(tree)
+	display.DotSubtree(tree)
 
 	if model, ok := bdd.FindModel(tree); ok {
 		t.Log(model)
@@ -278,7 +279,7 @@ func makePrimeTest(prime int) (Expression, []Term, []Term) {
 func TestIsPrimeCDCL(t *testing.T) {
 	t.Skip("Test is intractable")
 
-	prime := 4
+	prime := 17
 	expr, a, b := makePrimeTest(prime)
 
 	// convert to NNF
@@ -294,7 +295,7 @@ func TestIsPrimeCDCL(t *testing.T) {
 			exprs[i] = terms[i]
 		}
 
-		t.Log(i, PrintExpressiontree(Or(exprs...)))
+		t.Log(i, display.PrintExpressiontree(Or(exprs...)))
 	}
 
 	t.Log("variable count: ", len(Variables(cnf)))
@@ -313,7 +314,7 @@ func TestIsPrimeBDD(t *testing.T) {
 	// prepare the expression tree
 	expr = algorithm.PruneUnary(expr)
 
-	t.Log(dotExpressionTreeRec(expr))
+	t.Log(display.DotExpressionTreeRec(expr))
 
 	// run bdd algorithm
 	tree := algorithm.FromExpression(expr)

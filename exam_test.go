@@ -3,6 +3,7 @@ package gobdd
 import (
 	"github.com/timbeurskens/gobdd/algorithm"
 	"github.com/timbeurskens/gobdd/bdd_test"
+	"github.com/timbeurskens/gobdd/display"
 	. "github.com/timbeurskens/gobdd/operators"
 	bdd2 "github.com/timbeurskens/gobdd/operators/bdd"
 	"testing"
@@ -16,7 +17,7 @@ func TestJan2020ex1b(t *testing.T) {
 	expr := And(Biimplies(s, q), Or(r, Not(p)))
 
 	bdd := algorithm.FromExpression(algorithm.PruneUnary(expr))
-	DotSubtree(bdd)
+	display.DotSubtree(bdd)
 
 	b.AssertSat("(s <-> q) && (r || -p)", bdd)
 

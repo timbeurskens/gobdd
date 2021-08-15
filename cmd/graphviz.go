@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	. "github.com/timbeurskens/gobdd"
 	"github.com/timbeurskens/gobdd/algorithm"
+	. "github.com/timbeurskens/gobdd/display"
 	"github.com/timbeurskens/gobdd/operators"
 	"github.com/timbeurskens/gobdd/operators/bdd"
 )
