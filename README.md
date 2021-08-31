@@ -33,6 +33,7 @@ Model-search in both ROBDD-based and CDCL methods is supported by this framework
   - [CDCL SAT solving](#example-cdcl-sat-solving)
   - [CDCL after applying the Tseitin transformation](#example-cdcl-after-applying-the-tseitin-transformation)
   - [Prime decomposition](#example-prime-decomposition) 
+- [Known issues](#known-issues)
 
 ## Operators
 
@@ -291,3 +292,8 @@ Output:
 > Prime-decomposition of 91: 13 x 7
 > PASS: TestPrimeDecomposition (4.45s)
 ```
+
+## Known issues
+
+- RoBDD solving does not always return unique solutions. This problem can be resolved by replacing all named variables with integer variables to ensure a unique variable ordering.
+- CDCL solving is far from optimal and often needs to traverse the entire search space. Earlier elimination of clauses should be possible when using better suitable data structures.

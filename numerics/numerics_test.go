@@ -131,7 +131,7 @@ func TestPrimeDecomposition(t *testing.T) {
 	bench := bdd_test.Bench{T: t}
 
 	// prime1 and prime2 are invisible to the solver
-	var prime1, prime2 uint = 13, 7
+	var prime1, prime2 uint = 3, 7
 
 	// feed the composite number
 	combined := prime1 * prime2
